@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SP_Controller;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\MekanikController;
+use App\Http\Controllers\SPKController; // Tambahkan controller SPK jika belum
 
 // Rute login & logout
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -23,7 +24,6 @@ Route::get('/debug-session', function () {
     return session()->all();
 });
 
-
 // Rute hanya untuk user yang login
 Route::middleware('auth.session')->group(function () {
 
@@ -33,7 +33,6 @@ Route::middleware('auth.session')->group(function () {
     })->name('dashboard');
 
     // Rute Sidebar Tab
-
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi');
@@ -44,8 +43,9 @@ Route::middleware('auth.session')->group(function () {
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
     Route::get('/mekanik', [MekanikController::class, 'index'])->name('mekanik');
 
+    // Rute SPK
+    Route::get('/spk', function () {return view('spk');})->name('spk');
 
-    
     // Manajemen user (tampilan page)
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');

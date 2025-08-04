@@ -4,41 +4,49 @@
 <div class="container">
     <h4 class="mb-4 text-xl font-bold">Form Transaksi Bengkel</h4>
 
-    <button id="toggleFormBtn" class="btn btn-primary mb-3" onclick="toggleForm()">+ Transaksi Baru</button>
-
-    <div id="formTransaksi" class="card p-4 mb-4" style="display: none;">
+    <div id="formTransaksi" class="card p-4 mb-4">
         <form id="dataForm">
             @csrf
-            <div class="row mb-3">
-    <div class="col-md-4">
-        <label>Customer</label>
-        <select id="id_customer" class="form-control" required></select>
-    </div> 
-    <div class="col-md-4">
-        <label>No Kendaraan</label>
-        <input type="text" id="no_kendaraan" class="form-control" readonly>
-    </div>
-    <div class="col-md-4">
-        <label>No Telp Customer</label>
-        <input type="text" id="telp_customer" class="form-control" readonly>
-    </div>
-</div>
 
-<div class="row mb-3">
-    <div class="col-md-4">
-        <label>Mekanik</label>
-        <select id="id_mekanik" class="form-control" required></select>
-    </div>
-    <div class="col-md-4">
-        <label>No Telp Mekanik</label>
-        <input type="text" id="telp_mekanik" class="form-control" readonly>
-    </div>
-</div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>ID SPK</label>
+                    <select id="id_spk" class="form-control" required>
+                        <option value="">Pilih SPK</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Customer</label>
+                    <select id="id_customer" class="form-control" required disabled></select>
+                </div>
+                <div class="col-md-4">
+                    <label>No Kendaraan</label>
+                    <input type="text" id="no_kendaraan" class="form-control" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label>No Telp Customer</label>
+                    <input type="text" id="telp_customer" class="form-control" readonly>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Mekanik</label>
+                    <select id="id_mekanik" class="form-control" required></select>
+                </div>
+                <div class="col-md-4">
+                    <label>No Telp Mekanik</label>
+                    <input type="text" id="telp_mekanik" class="form-control" readonly>
+                </div>
+            </div>
 
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label>Jenis Jasa</label>
-                    <select id="id_jasa" class="form-control" required></select>
+                    <select id="id_jasa" class="form-control" required disabled></select>
                 </div>
                 <div class="col-md-6">
                     <label>Harga Jasa</label>
@@ -47,170 +55,100 @@
                 <div class="col-md-6 mt-3">
                     <label>Jenis Service</label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="jenis_service" id="berkala" value="1" required>
+                        <input class="form-check-input" type="radio" name="jenis_service" id="berkala" value="1" disabled>
                         <label class="form-check-label" for="berkala">Berkala</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="jenis_service" id="tidak_berkala" value="2">
+                        <input class="form-check-input" type="radio" name="jenis_service" id="tidak_berkala" value="2" disabled>
                         <label class="form-check-label" for="tidak_berkala">Tidak Berkala</label>
                     </div>
                 </div>
             </div>
 
-            <hr><br>
-            <h5>Sparepart</h5>
-            <div id="sparepart-list">
-                <div class="row mb-2 sparepart-item">
-                    <div class="col-md-4">
-                        <select name="sparepart_id[]" class="form-control sparepart-select"></select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" name="qty[]" class="form-control" placeholder="Qty" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control harga" placeholder="Harga" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-danger remove-sparepart">-</button>
-                    </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Sparepart</label>
+                    <select id="id_sparepart" class="form-control">
+                        <option value="">Pilih Sparepart</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Qty</label>
+                    <input type="number" id="qty_sparepart" class="form-control" min="1" value="1">
+                </div>
+                <div class="col-md-2">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-info w-100" onclick="addSparepart()">+ Tambah</button>
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary my-2" onclick="addSparepart()">+ Tambah Sparepart</button>
 
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <label>Total</label>
-                    <input type="text" id="total" class="form-control" readonly>
+            <div class="mb-3">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sparepart</th>
+                            <th>Qty</th>
+                            <th>Harga</th>
+                            <th>Subtotal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sparepartList"></tbody>
+                </table>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6 offset-md-6">
+                    <label>Total Biaya</label>
+                    <input type="text" id="total_biaya" class="form-control" readonly>
                 </div>
             </div>
 
             <button type="submit" class="btn btn-success w-100 mt-3">Simpan Transaksi</button>
         </form>
     </div>
-
-    <div class="card p-3 mb-4">
-        <h5 class="mb-3">DAFTAR TRANSAKSI</h5>
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>No Kendaraan</th>
-                        <th>Customer</th>
-                        <th>Mekanik</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody id="listTransaksi"></tbody>
-            </table>
-        </div>
-    </div>
+</div>
+<!-- Tombol Tampil Data -->
+<div class="mb-3">
+    <button id="btnTampilTransaksi" class="btn btn-primary">Tampilkan Data Transaksi</button>
 </div>
 
+<!-- Tabel Transaksi -->
+<table class="table table-bordered table-striped" id="tabelTransaksi" style="display:none">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Jenis</th>
+            <th>No Kendaraan</th>
+            <th>Mekanik</th>
+            <th>Jasa</th>
+            <th>Sparepart</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="bodyTransaksi"></tbody>
+</table>
+
 <script>
-const token = "{{ session('token') }}";
 const apiUrl = 'http://localhost:8000/api/';
-let sparepartOptions = '';
+let sparepartListData = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     loadDropdown('customers', 'id_customer');
     loadDropdown('mekanik', 'id_mekanik');
     loadDropdown('jenis_jasa', 'id_jasa');
-    fetchSparepartOptions();
-    loadTransaksiList();
+    loadDropdown('sparepart', 'id_sparepart', true);
+    loadSPKDropdown();
 
-    document.getElementById('dataForm').addEventListener('submit', handleSubmit);
+    document.getElementById('id_spk').addEventListener('change', autofillFromSPK);
     document.getElementById('id_jasa').addEventListener('change', calculateTotal);
+    document.getElementById('id_mekanik').addEventListener('change', fetchMekanikPhone);
+    document.getElementById('dataForm').addEventListener('submit', handleSubmit);
 });
 
-function toggleForm() {
-    const formDiv = document.getElementById('formTransaksi');
-    const btn = document.getElementById('toggleFormBtn');
-    formDiv.style.display = formDiv.style.display === 'block' ? 'none' : 'block';
-    btn.innerText = formDiv.style.display === 'block' ? 'Tutup Form' : '+ Transaksi Baru';
-}
-
-function fetchSparepartOptions() {
-    fetch(apiUrl + 'sparepart')
-        .then(res => res.json())
-        .then(result => {
-            const data = result.data || result;
-            sparepartOptions = '<option value="">Pilih Sparepart</option>';
-            data.forEach(sp => {
-                sparepartOptions += `<option value="${sp.id_sparepart}" data-harga="${sp.harga_jual}">${sp.id_sparepart} - ${sp.nama_sparepart}</option>`;
-            });
-            document.querySelectorAll('.sparepart-select').forEach(select => {
-                select.innerHTML = sparepartOptions;
-            });
-        });
-}
-
-function addSparepart() {
-    const container = document.getElementById('sparepart-list');
-    const row = document.createElement('div');
-    row.className = 'row mb-2 sparepart-item';
-    row.innerHTML = `
-        <div class="col-md-4">
-            <select name="sparepart_id[]" class="form-control sparepart-select">${sparepartOptions}</select>
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="qty[]" class="form-control" placeholder="Qty" required>
-        </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control harga" placeholder="Harga" readonly>
-        </div>
-        <div class="col-md-3">
-            <button type="button" class="btn btn-danger remove-sparepart">-</button>
-        </div>
-    `;
-    container.appendChild(row);
-}
-
-document.addEventListener('click', function (e) {
-    if (e.target.classList.contains('remove-sparepart')) {
-        e.target.closest('.sparepart-item').remove();
-        calculateTotal();
-    }
-});
-
-document.addEventListener('change', function (e) {
-    if (e.target.classList.contains('sparepart-select')) {
-        const row = e.target.closest('.sparepart-item');
-        const selectedOption = e.target.selectedOptions[0];
-        const harga = parseInt(selectedOption.getAttribute('data-harga')) || 0;
-
-        row.querySelector('[name="qty[]"]').value = 1;
-        row.querySelector('.harga').value = harga;
-
-        calculateTotal();
-    }
-
-    if (e.target.name === 'qty[]') {
-        calculateTotal();
-    }
-});
-document.getElementById('id_customer').addEventListener('change', function () {
-    const customerId = this.value;
-    fetch(apiUrl + 'customers/' + customerId)
-        .then(res => res.json())
-        .then(result => {
-            const cust = result.data || result;
-            document.getElementById('no_kendaraan').value = cust.no_kendaraan || '';
-            document.getElementById('telp_customer').value = cust.telepon || '';
-        });
-});
-
-document.getElementById('id_mekanik').addEventListener('change', function () {
-    const mekanikId = this.value;
-    fetch(apiUrl + 'mekanik/' + mekanikId)
-        .then(res => res.json())
-        .then(result => {
-            const mek = result.data || result;
-            document.getElementById('telp_mekanik').value = mek.telepon || '';
-        });
-});
-
-function loadDropdown(endpoint, elementId) {
+function loadDropdown(endpoint, elementId, includeHarga = false) {
     fetch(apiUrl + endpoint)
         .then(res => res.json())
         .then(result => {
@@ -218,120 +156,192 @@ function loadDropdown(endpoint, elementId) {
             const select = document.getElementById(elementId);
             select.innerHTML = '<option value="">Pilih</option>';
             data.forEach(item => {
-                const id = item.id || item.id_customer || item.id_mekanik || item.id_jasa;
-                let name = item.nama_customer || item.nama_mekanik || item.nama_jasa;
-                let harga = item.harga || item.harga_jasa || 0;
-                select.innerHTML += `<option value="${id}" data-harga="${harga}">${id} - ${name}</option>`;
+                let option = '';
+                if (endpoint === 'customers') {
+                    option = `<option value="${item.id_customer}">${item.nama_customer}</option>`;
+                } else if (endpoint === 'mekanik') {
+                    option = `<option value="${item.id_mekanik}">${item.nama_mekanik}</option>`;
+                } else if (endpoint === 'jenis_jasa') {
+                    option = `<option value="${item.id_jasa}" data-harga="${item.harga_jasa}">${item.nama_jasa}</option>`;
+                } else if (endpoint === 'sparepart') {
+                    // Gunakan harga_jual sebagai harga
+                    option = `<option value="${item.id_sparepart}" data-harga="${item.harga_jual}">${item.nama_sparepart}</option>`;
+                }
+                select.innerHTML += option;
             });
         });
 }
 
+
+function loadSPKDropdown() {
+    fetch(apiUrl + 'spk')
+        .then(res => res.json())
+        .then(result => {
+            const data = result.data || result;
+            const select = document.getElementById('id_spk');
+            select.innerHTML = '<option value="">Pilih SPK</option>';
+            data.forEach(spk => {
+                select.innerHTML += `<option value="${spk.id_spk}">SPK #${spk.id_spk}</option>`;
+            });
+        });
+}
+
+function autofillFromSPK() {
+    const id = document.getElementById('id_spk').value;
+    if (!id) return;
+
+    fetch(apiUrl + 'spk/' + id)
+        .then(res => res.json())
+        .then(result => {
+            const spk = result.data || result;
+            document.getElementById('id_customer').value = spk.id_customer;
+            document.getElementById('id_jasa').value = spk.id_jasa;
+            document.getElementById('no_kendaraan').value = spk.no_kendaraan;
+
+            fetch(apiUrl + 'customers/' + spk.id_customer)
+                .then(res => res.json())
+                .then(cust => {
+                    document.getElementById('telp_customer').value = cust.data.telepon;
+                });
+
+            const jasaSelect = document.getElementById('id_jasa');
+            const harga = parseInt(jasaSelect.selectedOptions[0]?.getAttribute('data-harga')) || 0;
+            document.getElementById('harga_jasa').value = harga;
+            calculateTotal();
+        });
+}
+
+function fetchMekanikPhone() {
+    const id = document.getElementById('id_mekanik').value;
+    if (!id) return;
+    fetch(apiUrl + 'mekanik/' + id)
+        .then(res => res.json())
+        .then(result => {
+            document.getElementById('telp_mekanik').value = result.data.telepon;
+        });
+}
+
 function calculateTotal() {
-    let total = 0;
+    const hargaJasa = parseInt(document.getElementById('harga_jasa').value) || 0;
+    let totalSparepart = 0;
 
-    const jasaSelect = document.getElementById('id_jasa');
-    const hargaJasa = parseInt(jasaSelect.selectedOptions[0]?.getAttribute('data-harga')) || 0;
-    document.getElementById('harga_jasa').value = hargaJasa;
-
-    document.querySelectorAll('.sparepart-item').forEach(row => {
-        const qty = parseInt(row.querySelector('[name="qty[]"]').value) || 0;
-        const harga = parseInt(row.querySelector('.sparepart-select').selectedOptions[0]?.getAttribute('data-harga')) || 0;
-        row.querySelector('.harga').value = harga;
-        total += harga * qty;
+    sparepartListData.forEach(item => {
+        const subtotal = (parseInt(item.qty) || 0) * (parseInt(item.harga) || 0);
+        item.subtotal = subtotal;
+        totalSparepart += subtotal;
     });
 
-    total += hargaJasa;
-    document.getElementById('total').value = total;
+    const total = hargaJasa + totalSparepart;
+    document.getElementById('total_biaya').value = total;
+}
+
+function addSparepart() {
+    const select = document.getElementById('id_sparepart');
+    const qty = parseInt(document.getElementById('qty_sparepart').value) || 1;
+    const id = select.value;
+    const nama = select.options[select.selectedIndex].text;
+    const harga = parseInt(select.options[select.selectedIndex].getAttribute('data-harga')) || 0;
+
+    if (!id || isNaN(harga)) {
+        alert('Sparepart atau harga tidak valid.');
+        return;
+    }
+
+    const subtotal = qty * harga;
+
+    sparepartListData.push({ id_sparepart: parseInt(id), qty, harga, subtotal });
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>${nama}</td>
+        <td>${qty}</td>
+        <td>${harga}</td>
+        <td>${subtotal}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove();removeSparepart(${id});calculateTotal()">Hapus</button></td>
+    `;
+    document.getElementById('sparepartList').appendChild(tr);
+    calculateTotal();
+}
+
+function removeSparepart(id) {
+    sparepartListData = sparepartListData.filter(item => item.id_sparepart !== id);
 }
 
 function handleSubmit(e) {
     e.preventDefault();
 
-    const selectedService = document.querySelector('input[name="jenis_service"]:checked');
-    if (!selectedService) {
-        alert("Silakan pilih Jenis Service.");
-        return;
-    }
+    const hargaSparepart = sparepartListData.reduce((sum, item) => sum + (item.qty * item.harga), 0);
 
-    const spkData = {
-        id_jasa: document.getElementById('id_jasa').value,
-        id_service: selectedService.value
+    const data = {
+        id_spk: parseInt(document.getElementById('id_spk').value),
+        id_customer: parseInt(document.getElementById('id_customer').value),
+        id_jenis: parseInt(document.getElementById('id_jasa').value),
+        no_kendaraan: document.getElementById('no_kendaraan').value,
+        telepon: document.getElementById('telp_customer').value,
+        id_mekanik: parseInt(document.getElementById('id_mekanik').value),
+        harga_jasa: parseInt(document.getElementById('harga_jasa').value) || 0,
+        harga_sparepart: hargaSparepart,
+        total: parseInt(document.getElementById('total_biaya').value) || 0
     };
 
-    fetch(apiUrl + 'spk/', {
+    fetch(apiUrl + 'transaksi', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(spkData)
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     })
-    .then(res => res.json())
-    .then(spkResult => {
-        const transaksiData = {
-            id_spk: spkResult.data.id,
-            id_customer: document.getElementById('id_customer').value,
-            id_mekanik: document.getElementById('id_mekanik').value,
-            no_kendaraan: document.getElementById('no_kendaraan').value,
-            pemilik: '-',
-            telepon: '-',
-            total: parseInt(document.getElementById('total').value) || 0
-        };
-
-        return fetch(apiUrl + 'transaksi/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(transaksiData)
-        });
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Gagal submit. Status: " + res.status);
+        }
+        return res.json();
     })
-    .then(res => res.json())
-    .then(transaksiResult => {
-        const transaksiId = transaksiResult.data.id;
-        const sparepartIds = document.querySelectorAll('[name="sparepart_id[]"]');
-        const qtys = document.querySelectorAll('[name="qty[]"]');
-
-        sparepartIds.forEach((spEl, idx) => {
-            const harga = parseInt(spEl.selectedOptions[0]?.getAttribute('data-harga')) || 0;
-            const qty = parseInt(qtys[idx].value) || 1;
-            const data = {
-                id_sp: transaksiId,
-                id_customer: transaksiResult.data.id_customer,
-                id_sparepart: spEl.value,
-                qty: qty,
-                total: harga * qty
-            };
-
-            fetch(apiUrl + 'detail_transaksi/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-        });
-
-        alert('Transaksi berhasil disimpan!');
+    .then(res => {
+        alert("Transaksi berhasil disimpan!");
         document.getElementById('dataForm').reset();
-        toggleForm();
-        loadTransaksiList();
-        fetchSparepartOptions();
+        document.getElementById('sparepartList').innerHTML = '';
+        sparepartListData = [];
+        document.getElementById('total_biaya').value = '';
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Gagal menyimpan transaksi: " + err.message);
     });
 }
-
-function loadTransaksiList() {
+//
+document.getElementById('btnTampilTransaksi').addEventListener('click', function () {
     fetch(apiUrl + 'transaksi')
         .then(res => res.json())
         .then(result => {
             const data = result.data || result;
-            const tbody = document.getElementById('listTransaksi');
-            tbody.innerHTML = '';
-            data.forEach(trx => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${trx.id}</td>
-                        <td>${trx.no_kendaraan}</td>
-                        <td>${trx.pemilik}</td>
-                        <td>${trx.id_mekanik}</td>
-                        <td>${new Date(trx.created_at).toLocaleDateString()}</td>
-                    </tr>
+            const tbody = document.getElementById('bodyTransaksi');
+            tbody.innerHTML = ''; // bersihkan dulu
+            document.getElementById('tabelTransaksi').style.display = 'table';
+
+            data.forEach(row => {
+                const status = row.total > 0 ? 'Diproses' : 'Belum Diproses';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id_transaksi}</td>
+                    <td>${row.id_customer}</td>
+                    <td>${row.id_jenis}</td>
+                    <td>${row.no_kendaraan}</td>
+                    <td>${row.id_mekanik}</td>
+                    <td>${row.harga_jasa}</td>
+                    <td>${row.harga_sparepart}</td>
+                    <td>${row.total}</td>
+                    <td>${status}</td>
                 `;
+                tbody.appendChild(tr);
             });
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Gagal mengambil data transaksi');
         });
-}
+});
 </script>
+
+
 @endsection

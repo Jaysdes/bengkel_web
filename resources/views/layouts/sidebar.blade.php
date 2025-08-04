@@ -42,6 +42,16 @@
             </a>
         </li>
         @endif
+        {{-- SPK - admin & mekanik --}}
+@if(in_array($role, ['admin', 'mekanik']))
+<li class="nav-item mb-1">
+    <a href="{{ route('spk') }}"
+       class="nav-link d-flex align-items-center {{ $current == 'spk' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
+        <i class="bi bi-journal-check me-2"></i> SPK
+    </a>
+</li>
+@endif
+
 
         {{-- Teknisi - admin & mekanik --}}
         @if(in_array($role, ['admin', 'mekanik']))
