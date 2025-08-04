@@ -122,7 +122,7 @@
             const input = document.getElementById("password");
             const icon = document.getElementById("eye-icon");
 
-            if (input.type === "password") {
+            if (input.type === "password") {            
                 input.type = "text";
                 icon.classList.remove("ph-eye");
                 icon.classList.add("ph-eye-slash");
