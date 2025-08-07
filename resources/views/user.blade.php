@@ -42,7 +42,7 @@
             </form>
         </div>
     </div>
-
+    @include('layouts.tbatas')
     <!-- Tabel -->
     <div class="card p-3 mb-4">
         <h5 class="mb-3">DAFTAR USER</h5>
@@ -85,75 +85,161 @@
         </div>
     </div>
 </div>
-
+@include('layouts.tbbawah')
 <script>
-    const token = "{{ session('token') }}";
+const token = "{{ session('token') }}";
+const apiBase = "http://localhost:8000/api";
 
-    function showForm() {
-        document.getElementById('formUser').style.display = 'block';
-        document.getElementById('userForm').reset();
-        document.getElementById('user_id').value = '';
-        document.getElementById('password').required = true;
+let currentPage = 1;
+let totalEntries = 0;
+let totalPages = 0;
+
+function showForm() {
+    document.getElementById('formUser').style.display = 'block';
+    document.getElementById('userForm').reset();
+    document.getElementById('user_id').value = '';
+    document.getElementById('password').required = true;
+}
+
+function hideForm() {
+    document.getElementById('formUser').style.display = 'none';
+}
+
+function editUser(user) {
+    showForm();
+    document.getElementById('user_id').value = user.id;
+    document.getElementById('name').value = user.name;
+    document.getElementById('email').value = user.email;
+    document.getElementById('role').value = user.role;
+    document.getElementById('password').value = '';
+    document.getElementById('password').required = false;
+}
+
+document.getElementById("userForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById('user_id').value;
+    const form = e.target;
+
+    const data = {
+        name: form.name.value,
+        email: form.email.value,
+        role: form.role.value,
+    };
+
+    if (form.password.value) {
+        data.password = form.password.value;
     }
 
-    function hideForm() {
-        document.getElementById('formUser').style.display = 'none';
-    }
+    const url = id
+        ? `${apiBase}/users/${id}`
+        : "http://localhost:8000/auth/register";
 
-    function editUser(user) {
-        showForm();
-        document.getElementById('user_id').value = user.id;
-        document.getElementById('name').value = user.name;
-        document.getElementById('email').value = user.email;
-        document.getElementById('role').value = user.role;
-        document.getElementById('password').value = '';
-        document.getElementById('password').required = false;
-    }
+    const method = id ? "PUT" : "POST";
 
-    document.getElementById("userForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+    try {
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token,
+            },
+            body: JSON.stringify(data),
+        });
 
-        const id = document.getElementById('user_id').value;
-        const form = e.target;
+        const result = await res.json();
 
-        const data = {
-            name: form.name.value,
-            email: form.email.value,
-            role: form.role.value,
-        };
-
-        if (form.password.value) {
-            data.password = form.password.value;
+        if (res.ok) {
+            alert(id ? "Pengguna berhasil diperbarui!" : "Pengguna berhasil ditambahkan!");
+            loadUsers(); // reload table
+            hideForm();
+        } else {
+            alert("Gagal: " + (result.message || ''));
         }
+    } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan!");
+    }
+});
 
-        const url = id
-            ? `http://localhost:8000/api/users/${id}`
-            : "http://localhost:8000/auth/register";
+async function loadUsers() {
+    const perPage = parseInt(document.getElementById('entriesPerPage').value);
+    const search = document.getElementById('searchInput').value.trim();
 
-        const method = id ? "PUT" : "POST";
+    const url = `${apiBase}/users?page=${currentPage}&limit=${perPage}&search=${encodeURIComponent(search)}`;
 
-        try {
-            const res = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token,
-                },
-                body: JSON.stringify(data),
-            });
-
-            const result = await res.json();
-
-            if (res.ok) {
-                alert(id ? "Pengguna berhasil diperbarui!" : "Pengguna berhasil ditambahkan!");
-                location.reload();
-            } else {
-                alert("Gagal: " + (result.message || ''));
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Terjadi kesalahan!");
-        }
+    const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` }
     });
+
+    const result = await res.json();
+    const data = result.data?.data || result.data || [];
+
+    totalEntries = result.total || result.meta?.total || data.length;
+    totalPages = Math.ceil(totalEntries / perPage);
+
+    const tbody = document.getElementById('userTableBody');
+    tbody.innerHTML = '';
+
+    const startIdx = (currentPage - 1) * perPage;
+    data.forEach((u, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${startIdx + i + 1}</td>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td>${u.role.charAt(0).toUpperCase() + u.role.slice(1)}</td>
+                <td><span class="badge bg-success">${u.status ?? 'Aktif'}</span></td>
+                <td>${new Date(u.created_at).toLocaleDateString('id-ID')}</td>
+                <td>
+                    <button class='btn btn-sm btn-warning' onclick='editUser(${JSON.stringify(u)})'>Edit</button>
+                    <form action='/users/${u.id}' method='POST' style='display:inline;' onsubmit="return confirm('Yakin ingin menghapus pengguna ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class='btn btn-sm btn-danger'>Hapus</button>
+                    </form>
+                </td>
+            </tr>
+        `;
+    });
+
+    const endEntry = Math.min(startIdx + data.length, totalEntries);
+    document.getElementById('tableInfo').textContent =
+        totalEntries > 0
+            ? `Showing ${startIdx + 1} to ${endEntry} of ${totalEntries} entries`
+            : `No entries found`;
+
+    renderPagination();
+}
+
+function renderPagination() {
+    const pageContainer = document.getElementById('pageNumbers');
+    pageContainer.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+        btn.style.borderRadius = '15%';
+        btn.onclick = () => {
+            currentPage = i;
+            loadUsers();
+        };
+        pageContainer.appendChild(btn);
+    }
+}
+
+document.getElementById('searchInput').addEventListener('input', () => {
+    currentPage = 1;
+    loadUsers(); // pencarian akan memanggil ulang data API
+});
+
+document.getElementById('entriesPerPage').addEventListener('change', () => {
+    currentPage = 1;
+    loadUsers();
+});
+
+// Panggil pertama kali
+loadUsers();
 </script>
+
 @endsection

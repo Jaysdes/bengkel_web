@@ -116,12 +116,7 @@
 
         <div x-show="open" x-transition class="mt-2">
             <ul class="nav flex-column ms-3 p-2 rounded bg-secondary bg-opacity-25">
-                <li class="nav-item mb-1">
-                    <a href="{{ route('service-center') }}"
-                       class="nav-link d-flex align-items-center {{ $current == 'service-center' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-dark rounded' }}">
-                        <i class="bi bi-hdd-rack me-2"></i> Data Service Center
-                    </a>
-                </li>
+               
                 @if($role === 'admin')
                 <li class="nav-item mb-1">
                     <a href="{{ route('users') }}"

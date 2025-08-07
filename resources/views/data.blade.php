@@ -30,17 +30,25 @@
                 <label for="nama_customer" class="form-label">Nama Customer</label>
                 <input type="text" name="nama_customer" id="nama_customer" class="form-control" required>
             </div>
+
             <div class="mb-3">
                 <label for="no_kendaraan" class="form-label">No Kendaraan</label>
                 <input type="text" name="no_kendaraan" id="no_kendaraan" class="form-control" required>
             </div>
+
             <div class="mb-3">
                 <label for="alamat" class="form-label">Alamat</label>
                 <input type="text" name="alamat" id="alamat" class="form-control" required>
             </div>
+
             <div class="mb-3">
                 <label for="telepon" class="form-label">Telepon</label>
                 <input type="text" name="telepon" id="telepon" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
+                <input type="date" name="tanggal_masuk" id="tanggal_masuk" class="form-control" required>
             </div>
 
             <button type="submit" class="btn btn-success">Simpan</button>
@@ -49,9 +57,11 @@
     </div>
 </div>
 
+@include('layouts.tbatas')
+
 <!-- Tabel Data Customer -->
 <div class="card p-3 mb-4">
-    <h5 class="mb-3">DAFTAR COSTUMER</h5>
+    <h5 class="mb-3">DAFTAR CUSTOMER</h5>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -62,17 +72,18 @@
                     <th>Jenis Kendaraan</th>
                     <th>Alamat</th>
                     <th>Telepon</th>
+                    <th>Tanggal Masuk</th>
                     @if($role !== 'customer')
                         <th>Aksi</th>
                     @endif
                 </tr>
             </thead>
-            <tbody id="customerTableBody">
-                <!-- Data akan dimuat via JavaScript -->
-            </tbody>
+            <tbody id="customerTableBody"></tbody>
         </table>
     </div>
 </div>
+@include('layouts.tbbawah')
+
 
 <script>
     const token = "{{ session('token') }}";
@@ -107,6 +118,7 @@
         tbody.innerHTML = '';
         data.data.forEach((c, i) => {
             const jenis = c.id_jenis == 1 ? 'Motor' : 'Mobil';
+            const tanggalMasuk = c.tanggal_masuk ? new Date(c.tanggal_masuk).toISOString().split('T')[0] : '-';
             let aksi = '';
             if (userRole !== 'customer') {
                 aksi = `
@@ -124,6 +136,7 @@
                     <td>${jenis}</td>
                     <td>${c.alamat}</td>
                     <td>${c.telepon}</td>
+                    <td>${tanggalMasuk}</td>
                     ${aksi}
                 </tr>
             `;
@@ -137,6 +150,7 @@
         document.getElementById('no_kendaraan').value = data.no_kendaraan;
         document.getElementById('alamat').value = data.alamat;
         document.getElementById('telepon').value = data.telepon;
+        document.getElementById('tanggal_masuk').value = data.tanggal_masuk?.split('T')[0] ?? '';
         document.getElementById('formUser').style.display = 'block';
         document.getElementById('toggleFormBtn').innerText = 'Tutup Form';
     }
@@ -155,37 +169,140 @@
     document.getElementById('dataForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        const form = this;
+        const id = form.id_customer.value;
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${apiBase}/customers/${id}` : `${apiBase}/customers`;
+
         const payload = {
-            nama_customer: this.nama_customer.value,
-            id_jenis: parseInt(this.id_jenis.value),
-            no_kendaraan: this.no_kendaraan.value,
-            alamat: this.alamat.value,
-            telepon: this.telepon.value
+            nama_customer: form.nama_customer.value,
+            id_jenis: parseInt(form.id_jenis.value),
+            no_kendaraan: form.no_kendaraan.value,
+            alamat: form.alamat.value,
+            telepon: form.telepon.value,
+            tanggal_masuk: new Date(form.tanggal_masuk.value).toISOString()
         };
 
-        const id = this.id_customer.value;
-        const url = id ? `${apiBase}/customers/${id}` : `${apiBase}/customers`;
-        const method = id ? 'PUT' : 'POST';
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
 
-        const res = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await res.json();
-        if (res.ok) {
-            alert(result.message);
-            this.reset();
-            hideForm();
-            loadCustomers();
-        } else {
-            alert('Gagal: ' + result.message);
+            const result = await res.json();
+            if (res.ok) {
+                alert(result.message);
+                form.reset();
+                form.id_customer.value = '';
+                hideForm(); 
+                loadCustomers();
+            } else {
+                alert('Gagal: ' + (result.message || 'Periksa input data.'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Terjadi kesalahan saat menyimpan data.');
         }
     });
+let currentPage = 1;
+let totalEntries = 0;
+let totalPages = 0;
+
+async function loadCustomers() {
+    const perPage = parseInt(document.getElementById('entriesPerPage').value);
+    const search = document.getElementById('searchInput').value.trim();
+
+    const res = await fetch(`${apiBase}/customers?page=${currentPage}&limit=${perPage}&search=${encodeURIComponent(search)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const result = await res.json();
+    const data = result.data || [];
+    totalEntries = result.total || data.length;
+    totalPages = Math.ceil(totalEntries / perPage);
+
+    const tbody = document.getElementById('customerTableBody');
+    tbody.innerHTML = '';
+
+    const startIdx = (currentPage - 1) * perPage;
+    data.forEach((c, i) => {
+        const jenis = c.id_jenis == 1 ? 'Motor' : 'Mobil';
+        const tanggalMasuk = c.tanggal_masuk ? new Date(c.tanggal_masuk).toISOString().split('T')[0] : '-';
+        let aksi = '';
+        if (userRole !== 'customer') {
+            aksi = `
+                <td>
+                    <button onclick='editCustomer(${JSON.stringify(c)})' class='btn btn-sm btn-warning'>Edit</button>
+                    <button onclick='deleteCustomer(${c.id_customer})' class='btn btn-sm btn-danger'>Hapus</button>
+                </td>
+            `;
+        }
+        tbody.innerHTML += `
+            <tr>
+                <td>${startIdx + i + 1}</td>
+                <td>${c.nama_customer}</td>
+                <td>${c.no_kendaraan}</td>
+                <td>${jenis}</td>
+                <td>${c.alamat}</td>
+                <td>${c.telepon}</td>
+                <td>${tanggalMasuk}</td>
+                ${aksi}
+            </tr>
+        `;
+    });
+
+    // Update info
+    const endEntry = Math.min(startIdx + data.length, totalEntries);
+    document.getElementById('tableInfo').textContent = `Showing ${startIdx + 1} to ${endEntry} of ${totalEntries} entries`;
+
+    renderPagination();
+}
+
+function renderPagination() {
+    const pageContainer = document.getElementById('pageNumbers');
+    pageContainer.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+        btn.style.borderRadius = '15%';
+        btn.onclick = () => {
+            currentPage = i;
+            loadCustomers();
+        };
+        pageContainer.appendChild(btn);
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        loadCustomers();
+    }
+}
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        currentPage++;
+        loadCustomers();
+    }
+}
+document.getElementById('searchInput').addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#customerTableBody tr');
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const text = Array.from(cells).map(td => td.textContent.toLowerCase()).join(' ');
+        row.style.display = text.includes(keyword) ? '' : 'none';
+    });
+});
+
 
     loadCustomers();
 </script>

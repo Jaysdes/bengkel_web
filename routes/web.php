@@ -38,11 +38,12 @@ Route::middleware('auth.session')->group(function () {
     Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi');
     Route::get('/proses', [ProsesController::class, 'index'])->name('proses');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-    Route::get('/service-center', [SCController::class, 'index'])->name('service-center');
     Route::get('/sparepart', [SP_Controller::class, 'index'])->name('sparepart');
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
     Route::get('/mekanik', [MekanikController::class, 'index'])->name('mekanik');
-
+    Route::get('/daftar-transaksi', function () {
+        return view('daftar_transaksi');
+    });
     // Rute SPK
     Route::get('/spk', function () {return view('spk');})->name('spk');
 

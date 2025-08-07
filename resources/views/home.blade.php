@@ -154,22 +154,6 @@
         </a>
         @endif
 
-        {{-- Data Service Center --}}
-        @if(in_array($role, ['admin', 'mekanik']))
-        <a href="{{ route('service-center') }}">
-            <div class="bg-gray-800 rounded-lg p-4 shadow hover:scale-[1.02] transition transform duration-300">
-                <div class="flex items-center mb-2">
-                    <svg class="h-6 w-6 mr-2 text-orange-400" fill="none" stroke="currentColor" stroke-width="2"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M9.75 3v3.75M14.25 3v3.75M4.5 9.75h15m-1.5 10.5H6a1.5 1.5 0 01-1.5-1.5V9.75h15v9a1.5 1.5 0 01-1.5 1.5z" />
-                    </svg>
-                    <h3 class="font-bold text-lg">Data Service Center</h3>
-                </div>
-                <p>Atur informasi service center, lokasi, dan jadwal operasional.</p>
-            </div>
-        </a>
-        @endif
 
         {{-- Manajemen User --}}
         @if($role == 'admin')

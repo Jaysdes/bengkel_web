@@ -58,7 +58,7 @@
         </form>
     </div>
 </div>
-
+@include('layouts.tbatas')
 <div class="card p-3 mb-4">
     <h5 class="mb-3">DAFTAR SPK</h5>
     <div class="table-responsive">
@@ -82,7 +82,7 @@
         </table>
     </div>
 </div>
-
+@include('layouts.tbbawah')
 <script>
 const token = "{{ session('token') }}";
 const apiBase = 'http://localhost:8000/api';
@@ -265,5 +265,87 @@ document.getElementById('id_customer').addEventListener('change', async function
 loadDropdown('jenis_jasa', 'id_jasa', jasaMap);
 loadDropdown('customers', 'id_customer', customerMap);
 loadRadioServices().then(loadSPKList);
+
+let allSPKData = [];
+let currentPage = 1;
+const rowsPerPage = 5;
+let filteredData = [];
+
+function renderTable(data) {
+    tableBody.innerHTML = '';
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginatedItems = data.slice(start, start + rowsPerPage);
+    paginatedItems.forEach((item, index) => appendRow(item, start + index + 1));
+}
+
+function renderPagination() {
+    const pageContainer = document.getElementById('pageNumbers');
+    pageContainer.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+        btn.style.borderRadius = '15%';
+        btn.onclick = () => {
+            currentPage = i;
+            loadSPKList(); 
+        };
+        pageContainer.appendChild(btn);
+    }
+}
+
+
+function updateTableInfo(dataLength) {
+    const start = (currentPage - 1) * rowsPerPage + 1;
+    let end = start + rowsPerPage - 1;
+    end = end > dataLength ? dataLength : end;
+    const infoText = dataLength === 0
+        ? "Showing 0 to 0 of 0 entries"
+        : `Showing ${start} to ${end} of ${dataLength} entries`;
+    document.getElementById('tableInfo').innerText = infoText;
+}
+
+function changePage(page) {
+    currentPage = page;
+    renderTable(filteredData);
+    renderPagination(filteredData.length);
+}
+
+document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    filteredData = allSPKData.filter(item => {
+        const service = serviceMap[item.id_service]?.toLowerCase() || '';
+        const jasa = jasaMap[item.id_jasa]?.toLowerCase() || '';
+        const customer = customerMap[item.id_customer]?.toLowerCase() || '';
+        const jenis = item.id_jenis == 1 ? 'motor' : item.id_jenis == 2 ? 'mobil' : '';
+        return (
+            service.includes(query) ||
+            jasa.includes(query) ||
+            customer.includes(query) ||
+            item.no_kendaraan.toLowerCase().includes(query) ||
+            jenis.includes(query) ||
+            item.keluhan.toLowerCase().includes(query)
+        );
+    });
+    currentPage = 1;
+    renderTable(filteredData);
+    renderPagination(filteredData.length);
+});
+
+async function loadSPKList() {
+    const res = await fetch(`${apiBase}/spk`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    allSPKData = data.data;
+    filteredData = allSPKData;
+    currentPage = 1;
+    renderTable(filteredData);
+    renderPagination(filteredData.length);
+    document.getElementById('tableInfo').textContent = `Showing ${startIdx + 1} to ${endEntry} of ${totalEntries} entries`;
+
+}
+
 </script>
 @endsection

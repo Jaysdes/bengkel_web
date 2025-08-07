@@ -3,6 +3,10 @@
 @section('content')
 <div class="container">
     <h4 class="mb-4 text-xl font-bold">Form Transaksi Bengkel</h4>
+    <!-- Tombol untuk menampilkan transaksi -->
+<div class="mb-3">
+<a href="{{ url('/daftar-transaksi') }}" class="btn btn-primary">Lihat Daftar Transaksi</a>
+</div>
 
     <div id="formTransaksi" class="card p-4 mb-4">
         <form id="dataForm">
@@ -104,32 +108,18 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-success w-100 mt-3">Simpan Transaksi</button>
+<!-- Tombol Simpan & Batal Bersebelahan -->
+<div class="d-flex justify-content-start gap-2 mt-4">
+    <button type="submit" class="btn btn-success">Simpan Transaksi</button>
+    <button type="button" class="btn btn-secondary" onclick="resetForm()">Batal</button>
+</div>
+
+
         </form>
     </div>
 </div>
-<!-- Tombol Tampil Data -->
-<div class="mb-3">
-    <button id="btnTampilTransaksi" class="btn btn-primary">Tampilkan Data Transaksi</button>
-</div>
 
-<!-- Tabel Transaksi -->
-<table class="table table-bordered table-striped" id="tabelTransaksi" style="display:none">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Jenis</th>
-            <th>No Kendaraan</th>
-            <th>Mekanik</th>
-            <th>Jasa</th>
-            <th>Sparepart</th>
-            <th>Total</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody id="bodyTransaksi"></tbody>
-</table>
+
 
 <script>
 const apiUrl = 'http://localhost:8000/api/';
@@ -310,38 +300,27 @@ function handleSubmit(e) {
     });
 }
 //
-document.getElementById('btnTampilTransaksi').addEventListener('click', function () {
-    fetch(apiUrl + 'transaksi')
-        .then(res => res.json())
-        .then(result => {
-            const data = result.data || result;
-            const tbody = document.getElementById('bodyTransaksi');
-            tbody.innerHTML = ''; // bersihkan dulu
-            document.getElementById('tabelTransaksi').style.display = 'table';
+function resetForm() {
+    document.getElementById('dataForm').reset();
 
-            data.forEach(row => {
-                const status = row.total > 0 ? 'Diproses' : 'Belum Diproses';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.id_transaksi}</td>
-                    <td>${row.id_customer}</td>
-                    <td>${row.id_jenis}</td>
-                    <td>${row.no_kendaraan}</td>
-                    <td>${row.id_mekanik}</td>
-                    <td>${row.harga_jasa}</td>
-                    <td>${row.harga_sparepart}</td>
-                    <td>${row.total}</td>
-                    <td>${status}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Gagal mengambil data transaksi');
-        });
-});
+    // Kosongkan isian manual
+    document.getElementById('telp_customer').value = '';
+    document.getElementById('telp_mekanik').value = '';
+    document.getElementById('harga_jasa').value = '';
+    document.getElementById('total_biaya').value = '';
+    document.getElementById('no_kendaraan').value = '';
+
+    // Kosongkan daftar sparepart
+    sparepartListData = [];
+    document.getElementById('sparepartList').innerHTML = '';
+
+    // Reset dropdown ke posisi default
+    const dropdowns = ['id_spk', 'id_customer', 'id_jasa', 'id_mekanik', 'id_sparepart'];
+    dropdowns.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.selectedIndex = 0;
+    });
+}
+
 </script>
-
-
 @endsection
