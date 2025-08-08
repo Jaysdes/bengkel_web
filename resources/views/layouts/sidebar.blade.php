@@ -27,8 +27,8 @@
     <ul class="nav flex-column">
         {{-- Home - semua role --}}
         <li class="nav-item mb-1">
-            <a href="{{ route('home') }}"
-               class="nav-link d-flex align-items-center {{ $current == 'home' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
+            <a href="{{ route('dashboard') }}"
+               class="nav-link d-flex align-items-center {{ $current == 'dashboard' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
                 <i class="bi bi-house me-2"></i> Home
             </a>
         </li>

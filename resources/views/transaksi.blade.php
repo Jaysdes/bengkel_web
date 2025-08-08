@@ -122,7 +122,7 @@
 
 
 <script>
-const apiUrl = 'http://localhost:8000/api/';
+const apiUrl = 'http://localhost:8001/api/';
 let sparepartListData = [];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -283,22 +283,49 @@ function handleSubmit(e) {
     })
     .then(res => {
         if (!res.ok) {
-            throw new Error("Gagal submit. Status: " + res.status);
+            throw new Error("Gagal submit transaksi. Status: " + res.status);
         }
         return res.json();
     })
     .then(res => {
-        alert("Transaksi berhasil disimpan!");
-        document.getElementById('dataForm').reset();
-        document.getElementById('sparepartList').innerHTML = '';
-        sparepartListData = [];
-        document.getElementById('total_biaya').value = '';
+        const transaksi = res.data;
+
+        // ✅ Buat data untuk proses
+        const prosesData = {
+            id_transaksi: transaksi.id_transaksi,
+            id_mekanik: data.id_mekanik,
+            status: "Menunggu",
+            keterangan: "Proses awal setelah input transaksi",
+            tanggal: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD
+            waktu_mulai: new Date().toISOString(),
+            waktu_selesai: null
+        };
+
+        // Kirim proses ke API
+        return fetch(apiUrl + 'proses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(prosesData)
+        });
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Transaksi berhasil, tapi gagal menyimpan proses.");
+        }
+        return res.json();
+    })
+    .then(() => {
+        alert("✅ Transaksi dan proses berhasil disimpan!");
+        resetForm();
     })
     .catch(err => {
         console.error(err);
-        alert("Gagal menyimpan transaksi: " + err.message);
+        alert("❌ Terjadi kesalahan: " + err.message);
     });
 }
+
 //
 function resetForm() {
     document.getElementById('dataForm').reset();

@@ -115,7 +115,7 @@
         if (!confirm("Yakin ingin menghapus mekanik ini?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8000/api/mekanik/${id}`, {
+            const res = await fetch(`http://localhost:8001/api/mekanik/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": "Bearer " + token,
@@ -144,8 +144,8 @@
         };
 
         const url = id
-            ? `http://localhost:8000/api/mekanik/${id}`
-            : `http://localhost:8000/api/mekanik`;
+            ? `http://localhost:8001/api/mekanik/${id}`
+            : `http://localhost:8001/api/mekanik`;
 
         const method = id ? "PUT" : "POST";
 

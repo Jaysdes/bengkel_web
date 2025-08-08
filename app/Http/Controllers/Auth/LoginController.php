@@ -22,7 +22,7 @@ class LoginController extends Controller
 
         $client = new \GuzzleHttp\Client();
         try {
-            $response = $client->post('http://localhost:8000/auth/login', [
+            $response = $client->post('http://localhost:8001/auth/login', [
                 'json' => $credentials
             ]);
 

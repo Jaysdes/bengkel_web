@@ -2,97 +2,213 @@
 
 @section('content')
 
-@if(session('success') && session('user'))
-    <div id="loginAlert" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-50 animate-fade-in">
-        ✅ Selamat datang <strong>{{ session('user')['name'] }}</strong>! Anda login sebagai <strong>{{ session('user')['role'] }}</strong>.
+    <div class="row">
+
+        <!-- Main Content -->
+        <div class="col-lg-12">
+            <h4 class="mb-4 fw-bold text-info"><i class="fas fa-chart-bar"></i> Dashboard Ringkasan</h4>
+
+            <!-- Ringkasan Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2"><i class="fas fa-users fa-2x text-info"></i></div>
+                            <h6 class="fw-bold">User</h6>
+                            <h3>{{ $userCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2"><i class="fas fa-cash-register fa-2x text-success"></i></div>
+                            <h6 class="fw-bold">Transaksi</h6>
+                            <h3>{{ $transaksiCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2"><i class="fas fa-file-alt fa-2x text-warning"></i></div>
+                            <h6 class="fw-bold">SPK</h6>
+                            <h3>{{ $spkCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-2"><i class="fas fa-tasks fa-2x text-secondary"></i></div>
+                            <h6 class="fw-bold">Proses</h6>
+                            <h3>{{ $prosesCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-header fw-bold border-bottom border-info">
+                            <i class="fas fa-chart-pie text-info"></i> Distribusi Data
+                        </div>
+                        <div class="card-body" style="height:300px;">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-dark text-white neon-shadow h-100">
+                        <div class="card-header fw-bold border-bottom border-info">
+                            <i class="fas fa-chart-line text-info"></i> Grafik Tren Transaksi Harian
+                        </div>
+                        <div class="card-body" style="height:300px;">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ringkasan Tabel -->
+            <div class="card bg-dark text-white neon-shadow border-0">
+                <div class="card-header fw-bold border-bottom border-info">
+                    <i class="fas fa-table text-info"></i> Tabel Ringkasan Data
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-dark table-striped table-bordered mb-0 text-white">
+                        <thead class="table-light text-dark">
+                            <tr>
+                                <th>No</th>
+                                <th>Kategori</th>
+                                <th>Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>User</td><td>{{ $userCount }}</td></tr>
+                            <tr><td>2</td><td>Transaksi</td><td>{{ $transaksiCount }}</td></tr>
+                            <tr><td>3</td><td>SPK</td><td>{{ $spkCount }}</td></tr>
+                            <tr><td>4</td><td>Proses</td><td>{{ $prosesCount }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <script>
-        setTimeout(() => {
-            const alert = document.getElementById('loginAlert');
-            if (alert) {
-                alert.style.transition = 'opacity 0.5s ease';
-                alert.style.opacity = 0;
-                setTimeout(() => alert.remove(), 500);
-            }
-        }, 4000);
-    </script>
-@endif
 
-@php
-    $role = session('user')['role'] ?? 'guest';
-@endphp
+@endsection
 
+@push('styles')
 <style>
     body {
-        background: linear-gradient(135deg, #1e293b, #0f172a);
+        background-color: #000;
+        color: #fff;
     }
 
-    .glass-card {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        border-radius: 1rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .neon-shadow {
+        box-shadow:
+            0 8px 15px rgba(0, 240, 255, 0.15), /* shadow bawah */
+            0 0 15px rgba(0, 240, 255, 0.3),     /* glow */
+            0 0 30px rgba(0, 240, 255, 0.1);     /* glow luar */
+        border-radius: 15px;
+        transform: translateY(0);
+        transition: all 0.3s ease-in-out;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
     }
 
-    .glass-card:hover {
-        transform: scale(1.03);
-        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.3);
+    .neon-shadow:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow:
+            0 12px 30px rgba(0, 240, 255, 0.3),
+            0 0 25px rgba(0, 240, 255, 0.6),
+            0 0 40px rgba(0, 240, 255, 0.4);
     }
 
-    .glass-icon {
-        background: rgba(255, 255, 255, 0.12);
-        padding: 12px;
-        border-radius: 50%;
+    .card-header {
+        background: transparent;
+        border-bottom: 1px solid #00f0ff33;
+    }
+
+    .table-dark th, .table-dark td {
+        border-color: #0ff;
+    }
+
+    .table-dark {
+        background-color: rgba(0,0,0,0.5);
     }
 </style>
+@endpush
 
-<div class="p-6 min-h-screen text-white">
-    <h1 class="text-3xl font-bold mb-6 text-center">Dashboard</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        {{-- Card Template --}}
-        @php
-            $cards = [];
-
-            if (in_array($role, ['admin', 'customer'])) {
-                $cards[] = ['label' => 'Data', 'icon' => '📁', 'route' => 'data'];
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['User', 'Transaksi', 'SPK', 'Proses'],
+            datasets: [{
+                data: [{{ $userCount }}, {{ $transaksiCount }}, {{ $spkCount }}, {{ $prosesCount }}],
+                backgroundColor: ['#17a2b8', '#28a745', '#ffc107', '#6c757d'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: 'white'
+                    }
+                }
             }
-            if (in_array($role, ['admin', 'mekanik'])) {
-                $cards[] = ['label' => 'Teknisi', 'icon' => '🛠️', 'route' => 'teknisi'];
-            }
-            if (in_array($role, ['admin', 'customer', 'mekanik'])) {
-                $cards[] = ['label' => 'Proses Berjalan', 'icon' => '🚧', 'route' => 'proses'];
-                $cards[] = ['label' => 'Laporan', 'icon' => '📊', 'route' => 'laporan'];
-            }
-            if (in_array($role, ['admin', 'gudang'])) {
-                $cards[] = ['label' => 'Sparepart', 'icon' => '🔩', 'route' => 'sparepart'];
-            }
-            if (in_array($role, ['admin', 'keuangan'])) {
-                $cards[] = ['label' => 'Transaksi', 'icon' => '💳', 'route' => 'transaksi'];
-            }
-            if ($role == 'admin') {
-                $cards[] = ['label' => 'Manajemen User', 'icon' => '👥', 'route' => 'users'];
-                $cards[] = ['label' => 'Manajemen Mekanik', 'icon' => '🧑‍🔧', 'route' => 'mekanik'];
-            }
+        }
+    });
 
-            array_unshift($cards, ['label' => 'Home', 'icon' => '🏠', 'route' => 'home']);
-        @endphp
-
-        @foreach($cards as $card)
-        <a href="{{ route($card['route']) }}">
-            <div class="glass-card p-6 h-full flex flex-col justify-between">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="glass-icon text-2xl">{{ $card['icon'] }}</div>
-                    <h3 class="text-xl font-semibold">{{ $card['label'] }}</h3>
-                </div>
-                <p class="text-sm text-gray-300">Klik untuk membuka halaman {{ strtolower($card['label']) }}.</p>
-            </div>
-        </a>
-        @endforeach
-
-    </div>
-</div>
-
+    // Line Chart
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($chartLabels) !!},
+            datasets: [{
+                label: 'Transaksi Harian',
+                data: {!! json_encode($chartData) !!},
+                borderColor: '#00f0ff',
+                backgroundColor: 'rgba(0,240,255,0.2)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: { color: '#fff' }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, color: '#fff' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
+                    }
+                }
+            }
+        }
+    });
+</script>
 @endsection

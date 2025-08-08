@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\TeknisiController;
 use App\Http\Controllers\ProsesController;
@@ -12,7 +11,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SP_Controller;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\MekanikController;
-use App\Http\Controllers\SPKController; // Tambahkan controller SPK jika belum
+use App\Http\Controllers\SPKController; 
+use App\Http\Controllers\DashboardController;
 
 // Rute login & logout
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -28,12 +28,10 @@ Route::get('/debug-session', function () {
 Route::middleware('auth.session')->group(function () {
 
     // Dashboard utama
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     // Rute Sidebar Tab
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi');
     Route::get('/proses', [ProsesController::class, 'index'])->name('proses');

@@ -83,61 +83,116 @@
     </div>
 </div>
 @include('layouts.tbbawah')
+
 <script>
 const token = "{{ session('token') }}";
-const apiBase = 'http://localhost:8000/api';
+const apiBase = 'http://localhost:8001/api';
 const userRole = "{{ session('user')['role'] ?? '' }}";
 
 const jasaMap = {};
 const serviceMap = {};
 const customerMap = {};
+
+
 const tableBody = document.getElementById('spkTableBody');
+const tableInfo = document.getElementById('tableInfo');
+const pageNumbers = document.getElementById('pageNumbers');
+const searchInput = document.getElementById('searchInput');
 
-function toggleForm() {
-    const formDiv = document.getElementById('formSpk');
-    const toggleBtn = document.getElementById('toggleFormBtn');
-    const visible = formDiv.style.display === 'block';
-    formDiv.style.display = visible ? 'none' : 'block';
-    toggleBtn.innerText = visible ? '+ Tambah SPK' : 'Tutup Form';
-}
+let allSPK = [];        // semua data
+let filteredSPK = [];   // hasil pencarian
+let currentPage = 1;
+let itemsPerPage = 5;   // bisa disesuaikan
 
-function resetForm() {
-    document.getElementById('spkForm').reset();
-    document.getElementById('id_spk').value = '';
-    toggleForm();
-}
 
 function formatTanggal(tgl) {
     const date = new Date(tgl);
-    return new Intl.DateTimeFormat('id-ID', {
-        day: '2-digit', month: 'long', year: 'numeric'
-    }).format(date);
+    return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }).format(date);
 }
 
-function appendRow(spk, index = null) {
-    const jenisName = spk.id_jenis == 1 ? 'Motor' : (spk.id_jenis == 2 ? 'Mobil' : '-');
-    const serviceName = serviceMap[spk.id_service] ?? spk.id_service;
-    const jasaName = jasaMap[spk.id_jasa] ?? spk.id_jasa;
-    const customerName = customerMap[spk.id_customer] ?? spk.id_customer;
+function paginate(array, page, perPage) {
+    const start = (page - 1) * perPage;
+    return array.slice(start, start + perPage);
+}
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${index ?? tableBody.children.length + 1}</td>
-        <td>${formatTanggal(spk.tanggal_spk)}</td>
-        <td>${serviceName}</td>
-        <td>${jasaName}</td>
-        <td>${customerName}</td>
-        <td>${jenisName}</td>
-        <td>${spk.no_kendaraan}</td>
-        <td>${spk.keluhan}</td>
-        ${userRole !== 'customer' ? `
-            <td>
-                <button onclick='editSPK(${JSON.stringify(spk)})' class='btn btn-sm btn-warning'>Edit</button>
-                <button onclick='deleteSPK(${spk.id_spk})' class='btn btn-sm btn-danger'>Hapus</button>
-            </td>
-        ` : ''}
-    `;
-    tableBody.appendChild(row);
+function updateTableDisplay() {
+    const searchQuery = searchInput.value.toLowerCase();
+    filteredSPK = allSPK.filter(spk => {
+        const jasa = jasaMap[spk.id_jasa]?.toLowerCase() || '';
+        const customer = customerMap[spk.id_customer]?.toLowerCase() || '';
+        const service = serviceMap[spk.id_service]?.toLowerCase() || '';
+        const noKendaraan = spk.no_kendaraan.toLowerCase();
+        return jasa.includes(searchQuery) || customer.includes(searchQuery) || service.includes(searchQuery) || noKendaraan.includes(searchQuery);
+    });
+
+    const totalItems = filteredSPK.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+
+    const paginatedData = paginate(filteredSPK, currentPage, itemsPerPage);
+    renderTable(paginatedData);
+    renderPagination(totalItems);
+}
+
+function renderTable(data) {
+    tableBody.innerHTML = '';
+    data.forEach((spk, index) => {
+        const jenisName = spk.id_jenis == 1 ? 'Motor' : (spk.id_jenis == 2 ? 'Mobil' : '-');
+        const serviceName = serviceMap[spk.id_service] ?? spk.id_service;
+        const jasaName = jasaMap[spk.id_jasa] ?? spk.id_jasa;
+        const customerName = customerMap[spk.id_customer] ?? spk.id_customer;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
+            <td>${formatTanggal(spk.tanggal_spk)}</td>
+            <td>${serviceName}</td>
+            <td>${jasaName}</td>
+            <td>${customerName}</td>
+            <td>${jenisName}</td>
+            <td>${spk.no_kendaraan}</td>
+            <td>${spk.keluhan}</td>
+            ${userRole !== 'customer' ? `
+                <td>
+                    <button onclick='editSPK(${JSON.stringify(spk)})' class='btn btn-sm btn-warning'>Edit</button>
+                    <button onclick='deleteSPK(${spk.id_spk})' class='btn btn-sm btn-danger'>Hapus</button>
+                </td>` : ''
+            }
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function renderPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    tableInfo.textContent = `Showing ${startItem} to ${endItem} of ${totalItems} entries`;
+
+    pageNumbers.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}`;
+        btn.textContent = i;
+        btn.onclick = () => { currentPage = i; updateTableDisplay(); };
+        pageNumbers.appendChild(btn);
+    }
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(filteredSPK.length / itemsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        updateTableDisplay();
+    }
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        updateTableDisplay();
+    }
 }
 
 async function loadDropdown(endpoint, elementId, mapObj = null) {
@@ -178,73 +233,9 @@ async function loadSPKList() {
         headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    tableBody.innerHTML = '';
-    data.data.forEach((spk, i) => appendRow(spk, i + 1));
+    allSPK = data.data;
+    updateTableDisplay();
 }
-
-function editSPK(spk) {
-    document.getElementById('id_spk').value = spk.id_spk;
-    document.getElementById('tanggal_spk').value = spk.tanggal_spk.split('T')[0];
-    document.querySelector(`input[name="id_service"][value="${spk.id_service}"]`)?.click();
-    document.getElementById('id_jasa').value = spk.id_jasa;
-    document.getElementById('id_customer').value = spk.id_customer;
-    document.getElementById('id_jenis').value = spk.id_jenis;
-    document.getElementById('no_kendaraan').value = spk.no_kendaraan;
-    document.getElementById('keluhan').value = spk.keluhan;
-    document.getElementById('formSpk').style.display = 'block';
-    document.getElementById('toggleFormBtn').innerText = 'Tutup Form';
-}
-
-async function deleteSPK(id) {
-    if (!confirm('Yakin ingin menghapus data ini?')) return;
-    const res = await fetch(`${apiBase}/spk/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    const result = await res.json();
-    alert(result.message);
-    loadSPKList();
-}
-
-document.getElementById('spkForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const idService = document.querySelector('input[name="id_service"]:checked')?.value;
-    if (!idService) return alert('Pilih jenis service terlebih dahulu.');
-
-    const payload = {
-        tanggal_spk: new Date(this.tanggal_spk.value).toISOString(),
-        id_service: parseInt(idService),
-        id_jasa: parseInt(this.id_jasa.value),
-        id_customer: parseInt(this.id_customer.value),
-        id_jenis: parseInt(this.id_jenis.value),
-        no_kendaraan: this.no_kendaraan.value,
-        keluhan: this.keluhan.value
-    };
-
-    const id = this.id_spk.value;
-    const url = id ? `${apiBase}/spk/${id}` : `${apiBase}/spk`;
-    const method = id ? 'PUT' : 'POST';
-
-    const res = await fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-    });
-
-    const result = await res.json();
-    if (res.ok) {
-        alert(result.message);
-        loadSPKList();
-        this.reset();
-        toggleForm();
-    } else {
-        alert('Gagal: ' + result.message);
-    }
-});
 
 document.getElementById('id_customer').addEventListener('change', async function () {
     const customerId = this.value;
@@ -261,91 +252,33 @@ document.getElementById('id_customer').addEventListener('change', async function
     }
 });
 
+searchInput.addEventListener('input', () => {
+    currentPage = 1;
+    updateTableDisplay();
+});
+function toggleForm() {
+    const form = document.getElementById('formSpk');
+    const button = document.getElementById('toggleFormBtn');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        button.textContent = '- Tutup Form';
+    } else {
+        form.style.display = 'none';
+        button.textContent = '+ Tambah SPK';
+        resetForm(); // opsional: reset form saat ditutup
+    }
+}
+function resetForm() {
+    document.getElementById('spkForm').reset();
+    document.getElementById('id_spk').value = '';
+}
+
 // INIT
 loadDropdown('jenis_jasa', 'id_jasa', jasaMap);
 loadDropdown('customers', 'id_customer', customerMap);
 loadRadioServices().then(loadSPKList);
-
-let allSPKData = [];
-let currentPage = 1;
-const rowsPerPage = 5;
-let filteredData = [];
-
-function renderTable(data) {
-    tableBody.innerHTML = '';
-    const start = (currentPage - 1) * rowsPerPage;
-    const paginatedItems = data.slice(start, start + rowsPerPage);
-    paginatedItems.forEach((item, index) => appendRow(item, start + index + 1));
-}
-
-function renderPagination() {
-    const pageContainer = document.getElementById('pageNumbers');
-    pageContainer.innerHTML = '';
-
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
-        btn.style.borderRadius = '15%';
-        btn.onclick = () => {
-            currentPage = i;
-            loadSPKList(); 
-        };
-        pageContainer.appendChild(btn);
-    }
-}
-
-
-function updateTableInfo(dataLength) {
-    const start = (currentPage - 1) * rowsPerPage + 1;
-    let end = start + rowsPerPage - 1;
-    end = end > dataLength ? dataLength : end;
-    const infoText = dataLength === 0
-        ? "Showing 0 to 0 of 0 entries"
-        : `Showing ${start} to ${end} of ${dataLength} entries`;
-    document.getElementById('tableInfo').innerText = infoText;
-}
-
-function changePage(page) {
-    currentPage = page;
-    renderTable(filteredData);
-    renderPagination(filteredData.length);
-}
-
-document.getElementById('searchInput').addEventListener('input', function () {
-    const query = this.value.toLowerCase();
-    filteredData = allSPKData.filter(item => {
-        const service = serviceMap[item.id_service]?.toLowerCase() || '';
-        const jasa = jasaMap[item.id_jasa]?.toLowerCase() || '';
-        const customer = customerMap[item.id_customer]?.toLowerCase() || '';
-        const jenis = item.id_jenis == 1 ? 'motor' : item.id_jenis == 2 ? 'mobil' : '';
-        return (
-            service.includes(query) ||
-            jasa.includes(query) ||
-            customer.includes(query) ||
-            item.no_kendaraan.toLowerCase().includes(query) ||
-            jenis.includes(query) ||
-            item.keluhan.toLowerCase().includes(query)
-        );
-    });
-    currentPage = 1;
-    renderTable(filteredData);
-    renderPagination(filteredData.length);
-});
-
-async function loadSPKList() {
-    const res = await fetch(`${apiBase}/spk`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    allSPKData = data.data;
-    filteredData = allSPKData;
-    currentPage = 1;
-    renderTable(filteredData);
-    renderPagination(filteredData.length);
-    document.getElementById('tableInfo').textContent = `Showing ${startIdx + 1} to ${endEntry} of ${totalEntries} entries`;
-
-}
-
 </script>
+
+
 @endsection

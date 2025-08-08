@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
-    protected $apiUrl = 'http://localhost:8000/api/users';
+    protected $apiUrl = 'http://localhost:8001/api/users';
 
     // Tampilkan daftar pengguna
     public function index()
@@ -15,7 +15,7 @@ class UserController extends Controller
         $token = session('token');
     
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'http://localhost:8000/api/users', [
+        $response = $client->request('GET', 'http://localhost:8001/api/users', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
             ],
