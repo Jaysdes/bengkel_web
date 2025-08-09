@@ -32,6 +32,9 @@ Route::middleware('auth.session')->group(function () {
 
 
     // Rute Sidebar Tab
+    Route::get('/nota/{id}', [TransaksiController::class, 'nota']);
+
+
     Route::get('/data', [DataController::class, 'index'])->name('data');
     Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi');
     Route::get('/proses', [ProsesController::class, 'index'])->name('proses');
