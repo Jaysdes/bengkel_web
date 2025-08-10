@@ -10,6 +10,7 @@ use App\Http\Controllers\SCController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SP_Controller;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\NotaController;
 use App\Http\Controllers\MekanikController;
 use App\Http\Controllers\SPKController; 
 use App\Http\Controllers\DashboardController;
@@ -32,7 +33,7 @@ Route::middleware('auth.session')->group(function () {
 
 
     // Rute Sidebar Tab
-    Route::get('/nota/{id}', [TransaksiController::class, 'nota']);
+    Route::get('/nota/{id}', [NotaController::class, 'nota']);
 
 
     Route::get('/data', [DataController::class, 'index'])->name('data');

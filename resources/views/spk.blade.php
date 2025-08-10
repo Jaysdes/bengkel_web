@@ -236,7 +236,70 @@ async function loadSPKList() {
     allSPK = data.data;
     updateTableDisplay();
 }
+// 
+function editSPK(spk) {
+    document.getElementById('id_spk').value = spk.id_spk;
+    document.getElementById('tanggal_spk').value = spk.tanggal_spk.split('T')[0];
+    document.querySelector(`input[name="id_service"][value="${spk.id_service}"]`)?.click();
+    document.getElementById('id_jasa').value = spk.id_jasa;
+    document.getElementById('id_customer').value = spk.id_customer;
+    document.getElementById('id_jenis').value = spk.id_jenis;
+    document.getElementById('no_kendaraan').value = spk.no_kendaraan;
+    document.getElementById('keluhan').value = spk.keluhan;
+    document.getElementById('formSpk').style.display = 'block';
+    document.getElementById('toggleFormBtn').innerText = 'Tutup Form';
+}
 
+async function deleteSPK(id) {
+    if (!confirm('Yakin ingin menghapus data ini?')) return;
+    const res = await fetch(`${apiBase}/spk/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const result = await res.json();
+    alert(result.message);
+    loadSPKList();
+}
+
+document.getElementById('spkForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const idService = document.querySelector('input[name="id_service"]:checked')?.value;
+    if (!idService) return alert('Pilih jenis service terlebih dahulu.');
+
+    const payload = {
+        tanggal_spk: new Date(this.tanggal_spk.value).toISOString(),
+        id_service: parseInt(idService),
+        id_jasa: parseInt(this.id_jasa.value),
+        id_customer: parseInt(this.id_customer.value),
+        id_jenis: parseInt(this.id_jenis.value),
+        no_kendaraan: this.no_kendaraan.value,
+        keluhan: this.keluhan.value
+    };
+
+    const id = this.id_spk.value;
+    const url = id ? `${apiBase}/spk/${id}` : `${apiBase}/spk`;
+    const method = id ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+        alert(result.message);
+        loadSPKList();
+        this.reset();
+        toggleForm();
+    } else {
+        alert('Gagal: ' + result.message);
+    }
+});
 document.getElementById('id_customer').addEventListener('change', async function () {
     const customerId = this.value;
     if (!customerId) return;

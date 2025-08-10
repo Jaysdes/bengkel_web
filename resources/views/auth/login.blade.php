@@ -38,7 +38,7 @@
         <div class="px-6 py-6 space-y-4">
 
              <!-- Log-In Text -->
-    <h1 class="text-center text-2xl font-semibold tracking-wide text-white mb-2">Service APP</h1>
+    <h1 class="text-center text-2xl font-semibold tracking-wide text-white mb-2">Maintenace Service APP</h1>
 
 {{-- Alert Success (Login Berhasil) --}}
 @if(session('success') && session('user'))
