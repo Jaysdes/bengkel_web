@@ -2,51 +2,211 @@
 
 @section('content')
 <div class="container mt-4" id="nota">
-    <h3 class="text-center">Bengkel Motor Jaya</h3>
-    <p class="text-center">Jl. Contoh No. 123, Jakarta</p>
-    <hr>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Bengkel -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-gradient-primary text-white text-center py-3">
+                    <h3 class="mb-1"><i class="fas fa-wrench"></i> Bengkel Motor Jaya</h3>
+                    <p class="mb-0">Jl. Contoh No. 123, Jakarta | Telp: (021) 1234-5678</p>
+                </div>
 
-    <div class="mb-3">
-        <strong>No Transaksi:</strong> {{ $transaksi['id_transaksi'] }} <br>
-        <strong>Tanggal:</strong> {{ date('d-m-Y', strtotime($transaksi['created_at'] ?? now())) }}<br>
+                <div class="card-body p-4">
+                    <!-- Invoice Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3"><i class="fas fa-file-invoice"></i> INVOICE</h5>
+                            <table class="table table-borderless table-sm">
+                                <tr>
+                                    <td><strong>No Invoice:</strong></td>
+                                    <td>INV-{{ str_pad($transaksi['id_transaksi'], 6, '0', STR_PAD_LEFT) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tanggal:</strong></td>
+                                    <td>{{ $transaksi['tanggal'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Waktu:</strong></td>
+                                    <td>{{ $transaksi['waktu'] }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-primary mb-3"><i class="fas fa-user"></i> Data Customer</h5>
+                            <table class="table table-borderless table-sm">
+                                <tr>
+                                    <td><strong>Nama:</strong></td>
+                                    <td>{{ $transaksi['customer']['nama_customer'] ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telepon:</strong></td>
+                                    <td>{{ $transaksi['customer']['telepon'] ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alamat:</strong></td>
+                                    <td>{{ $transaksi['customer']['alamat'] ?? 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
 
-        <strong>Customer:</strong> {{ $transaksi['customer']['nama'] ?? '-' }} <br>
-        <strong>No Kendaraan:</strong> {{ $transaksi['no_kendaraan'] }}
-    </div>
+                    <!-- Vehicle Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <h6 class="mb-2"><i class="fas fa-car"></i> Informasi Kendaraan</h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <strong>No Kendaraan:</strong> {{ $transaksi['no_kendaraan'] }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Jenis:</strong> {{ $transaksi['jenis_kendaraan']['jenis_kendaraan'] ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <strong>Mekanik:</strong> {{ $transaksi['mekanik']['nama_mekanik'] ?? 'N/A' }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Deskripsi</th>
-                <th class="text-end">Harga (Rp)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Jasa</td>
-                <td class="text-end">{{ number_format($transaksi['harga_jasa'], 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td>Sparepart</td>
-                <td class="text-end">{{ number_format($transaksi['harga_sparepart'], 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <th>Total</th>
-                <th class="text-end">{{ number_format($transaksi['total'], 0, ',', '.') }}</th>
-            </tr>
-        </tbody>
-    </table>
+                    <!-- Items Table -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th width="5%">No</th>
+                                    <th width="45%">Deskripsi</th>
+                                    <th width="10%">Qty</th>
+                                    <th width="20%">Harga Satuan</th>
+                                    <th width="20%">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $no = 1; @endphp
+                                @foreach($transaksi['items'] as $item)
+                                <tr>
+                                    <td class="text-center">{{ $no++ }}</td>
+                                    <td>
+                                        {{ $item['nama'] }}
+                                        @if($item['type'] == 'jasa')
+                                            <small class="text-muted d-block">
+                                                <i class="fas fa-tools"></i> Jasa Service
+                                            </small>
+                                        @else
+                                            <small class="text-muted d-block">
+                                                <i class="fas fa-cog"></i> Sparepart
+                                            </small>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $item['qty'] }}</td>
+                                    <td class="text-end">Rp {{ number_format($item['harga'], 0, ',', '.') }}</td>
+                                    <td class="text-end">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</td>
+                                </tr>
+                                @endforeach
+                                
+                                <!-- Summary Rows -->
+                                <tr class="table-light">
+                                    <td colspan="4" class="text-end"><strong>Subtotal Jasa:</strong></td>
+                                    <td class="text-end"><strong>Rp {{ number_format($transaksi['subtotal_jasa'], 0, ',', '.') }}</strong></td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="4" class="text-end"><strong>Subtotal Sparepart:</strong></td>
+                                    <td class="text-end"><strong>Rp {{ number_format($transaksi['subtotal_sparepart'], 0, ',', '.') }}</strong></td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td colspan="4" class="text-end"><strong>GRAND TOTAL:</strong></td>
+                                    <td class="text-end"><h5 class="mb-0"><strong>Rp {{ number_format($transaksi['grand_total'], 0, ',', '.') }}</strong></h5></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-    <p class="mt-4">Status Pembayaran:
-        @if($transaksi['status_pembayaran'] === 'lunas')
-            <span class="badge bg-success">Lunas</span>
-        @else
-            <span class="badge bg-danger">Belum Lunas</span>
-        @endif
-    </p>
+                    <!-- Payment Status -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="alert alert-warning">
+                                <h6 class="mb-2"><i class="fas fa-credit-card"></i> Status Pembayaran</h6>
+                                @if(($transaksi['status_pembayaran'] ?? 'belum_lunas') === 'lunas')
+                                    <span class="badge bg-success fs-6">
+                                        <i class="fas fa-check-circle"></i> LUNAS
+                                    </span>
+                                @else
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="fas fa-exclamation-circle"></i> BELUM LUNAS
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-secondary">
+                                <h6 class="mb-2"><i class="fas fa-info-circle"></i> Informasi</h6>
+                                <small>
+                                    Total Item: {{ $transaksi['total_items'] ?? 0 }}<br>
+                                    SPK: {{ $transaksi['spk']['id_spk'] ?? 'N/A' }}<br>
+                                    Keluhan: {{ $transaksi['spk']['keluhan'] ?? 'N/A' }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="text-center mt-5">
-        <button class="btn btn-primary" onclick="window.print()">Cetak</button>
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <button class="btn btn-primary me-2" onclick="window.print()">
+                            <i class="fas fa-print"></i> Cetak Invoice
+                        </button>
+                        <a href="{{ route('transaksi') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                        @if(($transaksi['status_pembayaran'] ?? 'belum_lunas') !== 'lunas')
+                        <button class="btn btn-success ms-2" onclick="markAsPaid({{ $transaksi['id_transaksi'] }})">
+                            <i class="fas fa-money-bill-wave"></i> Tandai Lunas
+                        </button>
+                        @endif
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <small class="text-muted">
+                            Terima kasih atas kepercayaan Anda menggunakan jasa Bengkel Motor Jaya<br>
+                            <i class="fas fa-heart text-danger"></i> Kepuasan Anda adalah prioritas kami
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+@media print {
+    .btn, .navbar, .sidebar { display: none !important; }
+    .container { max-width: 100% !important; }
+    .card { border: none !important; box-shadow: none !important; }
+    body { font-size: 12px; }
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.neon-shadow {
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.neon-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+}
+</style>
+
+<script>
+function markAsPaid(transaksiId) {
+    if (confirm('Apakah Anda yakin ingin menandai transaksi ini sebagai lunas?')) {
+        // Implementation for marking as paid
+        alert('Fitur pembayaran akan segera diimplementasikan');
+    }
+}
+</script>
 @endsection
