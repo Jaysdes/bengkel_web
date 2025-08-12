@@ -53,7 +53,7 @@
     color: #000000; /* teks jadi hitam agar kontras */
     min-height: 100vh; 
 }
-    .neon-glow { box-shadow: 0 0 5px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 35px var(--neon-blue), 0 0 40px var(--neon-blue); }
+    .neon-glow { box-shadow: 0 0 5px var(--neon-blue), 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue); }
     .neon-text { color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue); }
     .neon-border { border: 2px solid var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue), inset 0 0 10px rgba(59, 130, 246, 0.15); }
     .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }

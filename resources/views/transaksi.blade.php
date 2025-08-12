@@ -201,7 +201,7 @@
                                 <p class="text-gray-400">Tambahkan spare part yang digunakan</p>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-secondary text-gray-400 border-gray-600 hover:bg-gray-700" onclick="clearSpareparts()">
+                        <button type="button" class="btn btn-sm btn-outline-danger text-gray-400 border-gray-600 hover:bg-gray-700" onclick="clearSpareparts()">
                             <i class="fas fa-trash"></i>
                             Clear All
                         </button>
@@ -278,7 +278,7 @@
         <!-- Summary Sidebar -->
         <div class="space-y-6">
             <!-- Transaction Summary -->
-            <div class="form-neon sticky top-24 bg-dark" id="summaryCard" style="display: none;">
+            <div class="form-neon top-24 bg-dark" id="summaryCard" style="display: none;">
                 <div class="flex items-center mb-4">
                     <div class="stat-icon w-10 h-10 mr-3">
                         <i class="fas fa-calculator"></i>
@@ -312,7 +312,7 @@
             </div>
 
             <!-- Progress Indicator -->
-            <div class="form-neon bg-dark">
+            <div class="form-neon bg-dark" >
                 <div class="flex items-center mb-4">
                     <div class="stat-icon w-10 h-10 mr-3">
                         <i class="fas fa-tasks"></i>
