@@ -447,6 +447,34 @@ function exportData() {
     showToast('Fitur export akan segera tersedia', 'info');
 }
 
+function markAsPaid(transaksiId) {
+    if (confirm('Apakah Anda yakin ingin menandai transaksi ini sebagai lunas?')) {
+        fetch(`${API_URL}/transaksi/${transaksiId}/mark-paid`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            showToast('Transaksi berhasil ditandai sebagai lunas!', 'success');
+            // Refresh the table data
+            setTimeout(() => {
+                tampilkanTabelTransaksi();
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Gagal menandai transaksi sebagai lunas. Silakan coba lagi.', 'danger');
+        });
+    }
+}
+
 // Utility functions
 function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID').format(amount || 0);
