@@ -905,8 +905,7 @@ function handleSubmit(e) {
     }
     
     // Show loading modal
-    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-    loadingModal.show();
+    showToast('Menyimpan transaksi...', 'info');
     
     updateProgress(80);
     updateProgressText('Menyimpan transaksi...');
