@@ -89,14 +89,7 @@
                         </tr>
                     </thead>
                     <tbody id="bodyTransaksi">
-                        <tr>
-                            <td colspan="10" class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="mt-2 mb-0">Memuat data transaksi...</p>
-                            </td>
-                        </tr>
+                        <!-- Data will be loaded dynamically -->
                     </tbody>
                 </table>
             </div>
@@ -344,6 +337,7 @@ function renderTable(data, startIndex) {
     });
 }
 
+// Remove the showLoading function as it's no longer needed
 
 function loadReferenceData() {
     return Promise.all([

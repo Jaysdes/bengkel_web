@@ -25,35 +25,35 @@
 
     {{-- Menu Utama --}}
     <ul class="nav flex-column">
-        {{-- Home - semua role --}}
+        {{-- Dashboard --}}
         <li class="nav-item mb-1">
             <a href="{{ route('dashboard') }}"
                class="nav-link d-flex align-items-center {{ $current == 'dashboard' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
-                <i class="bi bi-house me-2"></i> Home
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
             </a>
         </li>
 
-        {{-- Data - admin & customer --}}
+        {{-- Data Master --}}
         @if(in_array($role, ['admin', 'customer']))
         <li class="nav-item mb-1">
             <a href="{{ route('data') }}"
                class="nav-link d-flex align-items-center {{ $current == 'data' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
-                <i class="bi bi-folder2-open me-2"></i> Data
+                <i class="bi bi-folder2-open me-2"></i> Data Master
             </a>
         </li>
         @endif
-        {{-- SPK - admin & mekanik --}}
-@if(in_array($role, ['admin', 'mekanik']))
-<li class="nav-item mb-1">
-    <a href="{{ route('spk') }}"
-       class="nav-link d-flex align-items-center {{ $current == 'spk' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
-        <i class="bi bi-journal-check me-2"></i> SPK
-    </a>
-</li>
-@endif
 
+        {{-- SPK --}}
+        @if(in_array($role, ['admin', 'mekanik']))
+        <li class="nav-item mb-1">
+            <a href="{{ route('spk') }}"
+               class="nav-link d-flex align-items-center {{ $current == 'spk' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
+                <i class="bi bi-journal-check me-2"></i> Surat Perintah Kerja
+            </a>
+        </li>
+        @endif
 
-        {{-- Teknisi - admin & mekanik --}}
+        {{-- Teknisi --}}
         @if(in_array($role, ['admin', 'mekanik']))
         <li class="nav-item mb-1">
             <a href="{{ route('teknisi') }}"
@@ -63,7 +63,7 @@
         </li>
         @endif
 
-        {{-- Proses Berjalan - admin, customer, mekanik --}}
+        {{-- Proses Berjalan --}}
         @if(in_array($role, ['admin', 'customer', 'mekanik']))
         <li class="nav-item mb-1">
             <a href="{{ route('proses') }}"
@@ -73,27 +73,27 @@
         </li>
         @endif
 
-        {{-- Laporan - admin, customer, mekanik --}}
+        {{-- Laporan & Pembayaran --}}
         @if(in_array($role, ['admin', 'customer', 'mekanik']))
         <li class="nav-item mb-1">
             <a href="{{ route('laporan') }}"
                class="nav-link d-flex align-items-center {{ $current == 'laporan' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
-                <i class="bi bi-file-earmark-text me-2"></i> Laporan
+                <i class="bi bi-graph-up me-2"></i> Laporan & Pembayaran
             </a>
         </li>
         @endif
 
-        {{-- Sparepart - admin & gudang --}}
+        {{-- Sparepart --}}
         @if(in_array($role, ['admin', 'gudang']))
         <li class="nav-item mb-1">
             <a href="{{ route('sparepart') }}"
                class="nav-link d-flex align-items-center {{ $current == 'sparepart' ? 'bg-warning text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
-                <i class="bi bi-cpu me-2"></i> Sparepart
+                <i class="bi bi-cpu me-2"></i> Spare Parts
             </a>
         </li>
         @endif
 
-        {{-- Transaksi - admin & keuangan --}}
+        {{-- Transaksi --}}
         @if(in_array($role, ['admin', 'keuangan']))
         <li class="nav-item mb-1">
             <a href="{{ route('transaksi') }}"
@@ -104,7 +104,7 @@
         @endif
     </ul>
 
-    {{-- Dropdown Pengaturan - admin & mekanik --}}
+    {{-- Dropdown Pengaturan --}}
     @if(in_array($role, ['admin', 'mekanik']))
     <div class="mt-3" x-data="{ open: {{ $pengaturanActive ? 'true' : 'false' }} }">
         <button
@@ -116,7 +116,6 @@
 
         <div x-show="open" x-transition class="mt-2">
             <ul class="nav flex-column ms-3 p-2 rounded bg-secondary bg-opacity-25">
-               
                 @if($role === 'admin')
                 <li class="nav-item mb-1">
                     <a href="{{ route('users') }}"
@@ -135,6 +134,19 @@
         </div>
     </div>
     @endif
+
+    {{-- Quick Actions --}}
+    <div class="mt-4 border-top pt-3">
+        <small class="text-secondary fw-bold d-block mb-2">Quick Actions</small>
+        @if(in_array($role, ['admin', 'keuangan']))
+        <a href="{{ route('transaksi') }}" class="nav-link d-flex align-items-center text-white hover:bg-secondary rounded mb-1">
+            <i class="bi bi-plus-circle text-success me-2"></i> Transaksi Baru
+        </a>
+        @endif
+        <a href="{{ url('/daftar-transaksi') }}" class="nav-link d-flex align-items-center text-white hover:bg-secondary rounded">
+            <i class="bi bi-list text-primary me-2"></i> Lihat Transaksi
+        </a>
+    </div>
 
     {{-- Logout --}}
     <div class="mt-4">

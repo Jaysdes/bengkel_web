@@ -1,217 +1,274 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="mb-0 text-dark fw-bold">
-                        <i class="fas fa-cash-register"></i> Form Transaksi Bengkel
-                    </h4>
-                    <p class="text-muted mb-0">Kelola transaksi service kendaraan</p>
-                </div>
-                <div>
-                    <a href="{{ url('/daftar-transaksi') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-list"></i> Lihat Daftar Transaksi
-                    </a>
-                </div>
-            </div>
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-cash-register mr-3"></i>
+                Transaksi Bengkel
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Kelola transaksi service kendaraan dengan mudah dan efisien
+            </p>
+        </div>
+        <div class="flex items-center space-x-3 mt-4 lg:mt-0">
+            <a href="{{ url('/daftar-transaksi') }}" class="btn-neon">
+                <i class="fas fa-list"></i>
+                Lihat Daftar Transaksi
+            </a>
         </div>
     </div>
 
-    <!-- Main Form -->
-    <div class="row">
-        <div class="col-xl-8">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 ">
+        <!-- Main Form Column -->
+        <div class="xl:col-span-2 space-y-6">
             <form id="dataForm" class="needs-validation" novalidate>
                 @csrf
                 
-                <!-- SPK Selection -->
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Pilih SPK (Surat Perintah Kerja)</h5>
+                <!-- SPK Selection Card -->
+                <div class="form-neon bg-dark">
+                    <div class="flex items-center mb-6">
+                        <div class="stat-icon w-12 h-12 mr-4">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Pilih SPK</h3>
+                            <p class="text-gray-400">Surat Perintah Kerja sebagai dasar transaksi</p>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <label class="form-label">SPK <span class="text-danger">*</span></label>
-                                <select id="id_spk" class="form-select form-select-lg" required>
-                                    <option value="">-- Pilih SPK --</option>
-                                </select>
-                                <div class="invalid-feedback">Silakan pilih SPK</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                SPK <span class="text-red-400">*</span>
+                            </label>
+                            <select id="id_spk" class="input-neon w-full" required>
+                                <option value="">-- Pilih SPK --</option>
+                            </select>
+                            <div class="invalid-feedback text-red-400 text-sm mt-1">Silakan pilih SPK</div>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" class="btn-neon w-full" onclick="refreshSPK()">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer & Vehicle Info Card -->
+                <div class="form-neon bg-dark" id="customerInfo" style="display: none;">
+                    <div class="flex items-center mb-6">
+                        <div class="stat-icon w-12 h-12 mr-4">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Informasi Customer & Kendaraan</h3>
+                            <p class="text-gray-400">Data customer dan kendaraan dari SPK</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Customer</label>
+                            <select id="id_customer" class="input-neon w-full" disabled>
+                                <option value="">Loading...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">No Kendaraan</label>
+                            <div class="relative">
+                                <input type="text" id="no_kendaraan" class="input-neon w-full pl-10" readonly>
+                                <i class="fas fa-car absolute left-3 top-3.5 text-gray-400"></i>
                             </div>
-                            <div class="col-md-4 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-info w-100" onclick="refreshSPK()">
-                                    <i class="fas fa-sync-alt"></i> Refresh SPK
-                                </button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">No Telepon</label>
+                            <div class="relative">
+                                <input type="text" id="telp_customer" class="input-neon w-full pl-10" readonly>
+                                <i class="fas fa-phone absolute left-3 top-3.5 text-gray-400"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Customer & Vehicle Info -->
-                <div class="card border-0 shadow-sm mb-4" id="customerInfo" style="display: none;">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-user-car"></i> Informasi Customer & Kendaraan</h5>
+                <!-- Mechanic Selection Card -->
+                <div class="form-neon bg-dark" id="mechanicInfo" style="display: none;">
+                    <div class="flex items-center mb-6">
+                        <div class="stat-icon w-12 h-12 mr-4">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Pilih Mekanik</h3>
+                            <p class="text-gray-400">Teknisi yang akan menangani service</p>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Customer</label>
-                                <select id="id_customer" class="form-select" disabled>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Mekanik <span class="text-red-400">*</span>
+                            </label>
+                            <select id="id_mekanik" class="input-neon w-full" required>
+                                <option value="">-- Pilih Mekanik --</option>
+                            </select>
+                            <div class="invalid-feedback text-red-400 text-sm mt-1">Silakan pilih mekanik</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">No Telepon Mekanik</label>
+                            <div class="relative">
+                                <input type="text" id="telp_mekanik" class="input-neon w-full pl-10" readonly>
+                                <i class="fas fa-phone-alt absolute left-3 top-3.5 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Information Card -->
+                <div class="form-neon bg-dark" id="serviceInfo" style="display: none;">
+                    <div class="flex items-center mb-6">
+                        <div class="stat-icon w-12 h-12 mr-4">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white">Informasi Jasa Service</h3>
+                            <p class="text-gray-400">Detail layanan yang diberikan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Jenis Jasa</label>
+                                <select id="id_jasa" class="input-neon w-full" disabled>
                                     <option value="">Loading...</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">No Kendaraan</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-car"></i></span>
-                                    <input type="text" id="no_kendaraan" class="form-control" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">No Telepon Customer</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                    <input type="text" id="telp_customer" class="form-control" readonly>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Harga Jasa</label>
+                                <div class="relative">
+                                    <input type="text" id="harga_jasa" class="input-neon w-full pl-12" readonly>
+                                    <span class="absolute left-3 top-3.5 text-gray-400 font-medium">Rp</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Mechanic Selection -->
-                <div class="card border-0 shadow-sm mb-4" id="mechanicInfo" style="display: none;">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0"><i class="fas fa-user-cog"></i> Pilih Mekanik</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label">Mekanik <span class="text-danger">*</span></label>
-                                <select id="id_mekanik" class="form-select" required>
-                                    <option value="">-- Pilih Mekanik --</option>
-                                </select>
-                                <div class="invalid-feedback">Silakan pilih mekanik</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">No Telepon Mekanik</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
-                                    <input type="text" id="telp_mekanik" class="form-control" readonly>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service Info -->
-                <div class="card border-0 shadow-sm mb-4" id="serviceInfo" style="display: none;">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="fas fa-tools"></i> Informasi Jasa Service</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Jenis Jasa</label>
-                                <select id="id_jasa" class="form-select" disabled>
-                                    <option value="">Loading...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Harga Jasa</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="text" id="harga_jasa" class="form-control" readonly>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Jenis Service</label>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check form-check-inline p-3 border rounded">
-                                            <input class="form-check-input" type="radio" name="jenis_service" id="berkala" value="1" disabled>
-                                            <label class="form-check-label ms-2" for="berkala">
-                                                <i class="fas fa-calendar-check text-success"></i> Service Berkala
-                                            </label>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">Jenis Service</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-neon bg-cyan-500/10 neon-border">
+                                    <label class="flex items-center p-4 cursor-pointer">
+                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" disabled>
+                                        <div class="w-5 h-5 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-2 h-2 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check form-check-inline p-3 border rounded">
-                                            <input class="form-check-input" type="radio" name="jenis_service" id="tidak_berkala" value="2" disabled>
-                                            <label class="form-check-label ms-2" for="tidak_berkala">
-                                                <i class="fas fa-wrench text-warning"></i> Service Tidak Berkala
-                                            </label>
+                                        <div>
+                                            <div class="font-medium text-white">Service Berkala</div>
+                                            <div class="text-sm text-gray-400">Maintenance rutin terjadwal</div>
                                         </div>
-                                    </div>
+                                        <i class="fas fa-calendar-check text-cyan-400 ml-auto"></i>
+                                    </label>
+                                </div>
+                                <div class="form-neon bg-orange-500/10 border border-orange-500/30">
+                                    <label class="flex items-center p-4 cursor-pointer">
+                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" disabled>
+                                        <div class="w-5 h-5 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-2 h-2 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-white">Service Tidak Berkala</div>
+                                            <div class="text-sm text-gray-400">Perbaikan khusus/darurat</div>
+                                        </div>
+                                        <i class="fas fa-wrench text-orange-400 ml-auto"></i>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sparepart Section -->
-                <div class="card border-0 shadow-sm mb-4" id="sparepartSection" style="display: none;">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0"><i class="fas fa-cogs"></i> Tambah Sparepart</h5>
+                <!-- Sparepart Management Card -->
+                <div class="form-neon bg-dark" id="sparepartSection" style="display: none;">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <div class="stat-icon w-12 h-12 mr-4">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-white">Manajemen Sparepart</h3>
+                                <p class="text-gray-400">Tambahkan spare part yang digunakan</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary text-gray-400 border-gray-600 hover:bg-gray-700" onclick="clearSpareparts()">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Pilih Sparepart</label>
-                                <select id="id_sparepart" class="form-select">
+                    
+                    <!-- Add Sparepart Form -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg mb-6 border border-gray-700">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Pilih Sparepart</label>
+                                <select id="id_sparepart" class="input-neon w-full">
                                     <option value="">-- Pilih Sparepart --</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <label class="form-label">Qty</label>
-                                <input type="number" id="qty_sparepart" class="form-control" min="1" value="1">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Qty</label>
+                                <input type="number" id="qty_sparepart" class="input-neon w-full" min="1" value="1">
                             </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="button" class="btn btn-success w-100" onclick="addSparepart()">
-                                    <i class="fas fa-plus"></i> Tambah
-                                </button>
-                            </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-secondary w-100" onclick="clearSpareparts()">
-                                    <i class="fas fa-trash"></i> Clear
+                            <div class="md:col-span-2 flex items-end space-x-2">
+                                <button type="button" class="btn-neon-solid flex-1" onclick="addSparepart()">
+                                    <i class="fas fa-plus"></i>
+                                    Tambah
                                 </button>
                             </div>
                         </div>
+                        <div id="sparepartHint" class="text-sm text-cyan-400 mt-2 hidden">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <span id="sparepartHintText"></span>
+                        </div>
+                    </div>
 
-                        <!-- Sparepart List Table -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th width="40%">Nama Sparepart</th>
-                                        <th width="15%">Qty</th>
-                                        <th width="20%">Harga Satuan</th>
-                                        <th width="20%">Subtotal</th>
-                                        <th width="5%">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="sparepartList">
-                                    <tr id="noSparepartRow">
-                                        <td colspan="5" class="text-center text-muted py-3">
-                                            <i class="fas fa-info-circle"></i> Belum ada sparepart yang ditambahkan
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <!-- Sparepart List Table -->
+                    <div class="table-neon bg-dark">
+                        <table class="table w-full bg-dark text-dark">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-4">Nama Sparepart</th>
+                                    <th class="px-6 py-4 text-center">Qty</th>
+                                    <th class="px-6 py-4 text-right">Harga Satuan</th>
+                                    <th class="px-6 py-4 text-right">Subtotal</th>
+                                    <th class="px-6 py-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sparepartList">
+                                <tr id="noSparepartRow">
+                                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                        <div class="flex flex-col items-center space-y-2">
+                                            <i class="fas fa-info-circle text-2xl text-gray-600"></i>
+                                            <span>Belum ada sparepart yang ditambahkan</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="card border-0 shadow-sm" id="submitSection" style="display: none;">
-                    <div class="card-body text-center">
-                        <button type="submit" class="btn btn-primary btn-lg me-3" id="submitBtn">
-                            <i class="fas fa-save"></i> Simpan Transaksi
+                <!-- Submit Actions -->
+                <div class="form-neon bg-dark" id="submitSection" style="display: none;">
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
+                            <i class="fas fa-save mr-2"></i>
+                            Simpan Transaksi
                         </button>
-                        <button type="button" class="btn btn-secondary btn-lg" onclick="resetForm()">
-                            <i class="fas fa-undo"></i> Reset Form
+                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
+                            <i class="fas fa-undo mr-2"></i>
+                            Reset Form
                         </button>
                     </div>
                 </div>
@@ -219,46 +276,89 @@
         </div>
 
         <!-- Summary Sidebar -->
-        <div class="col-xl-4">
-            <div class="sticky-top" style="top: 20px;">
-                <!-- Summary Card -->
-                <div class="card border-0 shadow-lg" id="summaryCard" style="display: none;">
-                    <div class="card-header bg-gradient-success text-white">
-                        <h5 class="mb-0"><i class="fas fa-calculator"></i> Ringkasan Transaksi</h5>
+        <div class="space-y-6">
+            <!-- Transaction Summary -->
+            <div class="form-neon sticky top-24 bg-dark" id="summaryCard" style="display: none;">
+                <div class="flex items-center mb-4">
+                    <div class="stat-icon w-10 h-10 mr-3">
+                        <i class="fas fa-calculator"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Biaya Jasa:</span>
-                            <strong id="summary-jasa">Rp 0</strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Biaya Sparepart:</span>
-                            <strong id="summary-sparepart">Rp 0</strong>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="h5">Total:</span>
-                            <span class="h4 text-success" id="summary-total">Rp 0</span>
-                        </div>
-                        <div class="text-center">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle"></i>
-                                Total akan otomatis terupdate
-                            </small>
+                    <h3 class="text-lg font-semibold text-white">Ringkasan Transaksi</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-800">
+                        <span class="text-gray-400">Biaya Jasa:</span>
+                        <strong class="text-white" id="summary-jasa">Rp 0</strong>
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-800">
+                        <span class="text-gray-400">Biaya Sparepart:</span>
+                        <strong class="text-white" id="summary-sparepart">Rp 0</strong>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t-2 border-cyan-500">
+                        <span class="text-lg font-semibold text-white">Total:</span>
+                        <span class="text-2xl font-bold text-white" id="summary-total">Rp 0</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-info-circle text-cyan-400 mt-1"></i>
+                        <div class="text-sm text-cyan-200">
+                            <strong>Info:</strong> Total akan otomatis terupdate saat Anda menambahkan sparepart atau mengubah service.
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Progress Card -->
-                <div class="card border-0 shadow-sm mt-3">
-                    <div class="card-body">
-                        <h6 class="card-title"><i class="fas fa-tasks"></i> Progress Pengisian</h6>
-                        <div class="progress mb-2">
-                            <div class="progress-bar bg-success" id="progressBar" role="progressbar" style="width: 0%"></div>
-                        </div>
-                        <small class="text-muted">
-                            <span id="progressText">Pilih SPK untuk memulai</span>
-                        </small>
+            <!-- Progress Indicator -->
+            <div class="form-neon bg-dark">
+                <div class="flex items-center mb-4">
+                    <div class="stat-icon w-10 h-10 mr-3">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white">Progress</h3>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Progress Pengisian</span>
+                        <span class="font-medium text-white" id="progressPercentage">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden border border-gray-700">
+                        <div class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all duration-500 neon-glow" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="text-sm text-gray-400" id="progressText">
+                        Pilih SPK untuk memulai
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="form-neon bg-dark">
+                <div class="flex items-center mb-4">
+                    <div class="stat-icon w-10 h-10 mr-3">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white">Bantuan</h3>
+                </div>
+                
+                <div class="space-y-3 text-sm text-gray-400">
+                    <div class="flex items-start space-x-2">
+                        <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">1</span>
+                        <span>Pilih SPK sebagai dasar transaksi</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">2</span>
+                        <span>Pilih mekanik yang akan mengerjakan</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">3</span>
+                        <span>Tambahkan sparepart jika diperlukan</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">4</span>
+                        <span>Review ringkasan dan simpan transaksi</span>
                     </div>
                 </div>
             </div>
@@ -269,12 +369,15 @@
 <!-- Loading Modal -->
 <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content border-0">
-            <div class="modal-body text-center py-4">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
+        <div class="modal-content border-0 rounded-xl dark-card neon-border">
+            <div class="modal-body text-center py-6">
+                <div class="mb-4">
+                    <div class="spinner-border text-cyan-400 neon-glow" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
-                <p class="mb-0">Menyimpan transaksi...</p>
+                <h5 class="mb-2 text-white">Menyimpan Transaksi</h5>
+                <p class="text-gray-400 mb-0">Mohon tunggu sebentar...</p>
             </div>
         </div>
     </div>
@@ -283,19 +386,23 @@
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0">
-            <div class="modal-body text-center py-5">
-                <div class="mb-3">
-                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+        <div class="modal-content border-0 rounded-xl dark-card neon-border">
+            <div class="modal-body text-center py-8">
+                <div class="mb-4">
+                    <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto neon-glow">
+                        <i class="fas fa-check-circle text-green-400 text-4xl"></i>
+                    </div>
                 </div>
-                <h4 class="text-success mb-3">Transaksi Berhasil!</h4>
-                <p class="text-muted mb-4">Transaksi telah berhasil disimpan</p>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <button type="button" class="btn btn-primary" onclick="createNewTransaction()">
-                        <i class="fas fa-plus"></i> Transaksi Baru
+                <h4 class="text-green-400 mb-3 font-semibold">Transaksi Berhasil!</h4>
+                <p class="text-gray-400 mb-6">Transaksi telah berhasil disimpan ke sistem</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
+                    <button type="button" class="btn-neon" onclick="createNewTransaction()">
+                        <i class="fas fa-plus mr-2"></i>
+                        Transaksi Baru
                     </button>
-                    <button type="button" class="btn btn-success" id="viewInvoiceBtn">
-                        <i class="fas fa-receipt"></i> Lihat Nota
+                    <button type="button" class="btn-neon-solid" id="viewInvoiceBtn">
+                        <i class="fas fa-receipt mr-2"></i>
+                        Lihat Nota
                     </button>
                 </div>
             </div>
@@ -303,80 +410,9 @@
     </div>
 </div>
 
-<style>
-.bg-gradient-success {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-}
+@endsection
 
-.card {
-    transition: all 0.3s ease;
-    border-radius: 15px !important;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-}
-
-.btn {
-    border-radius: 25px !important;
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.form-control, .form-select {
-    border-radius: 10px !important;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 10px rgba(0,123,255,0.1);
-}
-
-.sticky-top {
-    transition: all 0.3s ease;
-}
-
-.progress-bar {
-    transition: width 0.5s ease-in-out;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(0,123,255,0.05);
-    transform: scale(1.01);
-    transition: all 0.2s ease;
-}
-
-.animate-slide-down {
-    animation: slideDown 0.5s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.form-check {
-    transition: all 0.3s ease;
-}
-
-.form-check:hover {
-    background-color: rgba(0,123,255,0.05);
-}
-</style>
-
+@section('scripts')
 <script>
 const API_URL = '{{ env('API_URL', 'http://localhost:8001/api') }}';
 let sparepartListData = [];
@@ -402,7 +438,7 @@ function initializeForm() {
         showToast('Formulir siap digunakan', 'success');
         updateProgress(20);
     }).catch(error => {
-        showToast('Gagal memuat data formulir', 'danger');
+        showToast('Gagal memuat data formulir', 'error');
         console.error('Error:', error);
     });
 }
@@ -413,11 +449,29 @@ function setupEventListeners() {
     document.getElementById('id_mekanik').addEventListener('change', fetchMekanikPhone);
     document.getElementById('dataForm').addEventListener('submit', handleSubmit);
     document.getElementById('id_sparepart').addEventListener('change', updateSparepartHint);
+    
+    // Radio button listeners
+    document.getElementById('berkala').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('berkala-dot').style.opacity = '1';
+            document.getElementById('tidak_berkala-dot').style.opacity = '0';
+        }
+    });
+    
+    document.getElementById('tidak_berkala').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('tidak_berkala-dot').style.opacity = '1';
+            document.getElementById('berkala-dot').style.opacity = '0';
+        }
+    });
 }
 
 function loadDropdown(endpoint, elementId, includeHarga = false) {
     return fetch(`${API_URL}/${endpoint}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(result => {
             const data = result.data || result;
             const select = document.getElementById(elementId);
@@ -436,12 +490,19 @@ function loadDropdown(endpoint, elementId, includeHarga = false) {
                 }
                 select.innerHTML += option;
             });
+        })
+        .catch(error => {
+            console.error(`Error loading ${endpoint}:`, error);
+            showToast(`Gagal memuat data ${endpoint}`, 'error');
         });
 }
 
 function loadSPKDropdown() {
     return fetch(`${API_URL}/spk`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(result => {
             const data = result.data || result;
             const select = document.getElementById('id_spk');
@@ -449,6 +510,10 @@ function loadSPKDropdown() {
             data.forEach(spk => {
                 select.innerHTML += `<option value="${spk.id_spk}">SPK #${String(spk.id_spk).padStart(4, '0')} - ${spk.keluhan || 'No Description'}</option>`;
             });
+        })
+        .catch(error => {
+            console.error('Error loading SPK:', error);
+            showToast('Gagal memuat data SPK', 'error');
         });
 }
 
@@ -463,7 +528,10 @@ function autofillFromSPK() {
     updateProgress(40);
 
     fetch(`${API_URL}/spk/${id}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(result => {
             const spk = result.data || result;
             document.getElementById('id_customer').value = spk.id_customer;
@@ -481,7 +549,10 @@ function autofillFromSPK() {
             // Load customer phone
             return fetch(`${API_URL}/customers/${spk.id_customer}`);
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(customer => {
             document.getElementById('telp_customer').value = customer.data.telepon;
 
@@ -495,7 +566,7 @@ function autofillFromSPK() {
             showToast('Data SPK berhasil dimuat', 'success');
         })
         .catch(error => {
-            showToast('Gagal memuat data SPK', 'danger');
+            showToast('Gagal memuat data SPK', 'error');
             console.error('Error:', error);
         });
 }
@@ -503,7 +574,14 @@ function autofillFromSPK() {
 function showSection(sectionId) {
     const section = document.getElementById(sectionId);
     section.style.display = 'block';
-    section.classList.add('animate-slide-down');
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        section.style.transition = 'all 0.5s ease';
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
+    }, 100);
 }
 
 function hideAllSections() {
@@ -522,12 +600,34 @@ function fetchMekanikPhone() {
     updateProgress(80);
     
     fetch(`${API_URL}/mekanik/${id}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(result => {
             document.getElementById('telp_mekanik').value = result.data.telepon;
             updateProgress(90);
             updateProgressText('Siap untuk submit transaksi');
+        })
+        .catch(error => {
+            console.error('Error loading mekanik phone:', error);
         });
+}
+
+function updateSparepartHint() {
+    const select = document.getElementById('id_sparepart');
+    const selectedOption = select.options[select.selectedIndex];
+    const hintDiv = document.getElementById('sparepartHint');
+    const hintText = document.getElementById('sparepartHintText');
+    
+    if (selectedOption && selectedOption.value) {
+        const stok = selectedOption.getAttribute('data-stok');
+        const harga = selectedOption.getAttribute('data-harga');
+        hintText.textContent = `Stok tersedia: ${stok} unit, Harga: Rp ${formatCurrency(harga)}`;
+        hintDiv.classList.remove('hidden');
+    } else {
+        hintDiv.classList.add('hidden');
+    }
 }
 
 function addSparepart() {
@@ -544,7 +644,7 @@ function addSparepart() {
     }
 
     if (qty > stok) {
-        showToast(`Qty melebihi stok yang tersedia (${stok})`, 'danger');
+        showToast(`Qty melebihi stok yang tersedia (${stok})`, 'error');
         return;
     }
 
@@ -553,7 +653,7 @@ function addSparepart() {
     if (existingIndex !== -1) {
         const newQty = sparepartListData[existingIndex].qty + qty;
         if (newQty > stok) {
-            showToast(`Total qty akan melebihi stok yang tersedia (${stok})`, 'danger');
+            showToast(`Total qty akan melebihi stok yang tersedia (${stok})`, 'error');
             return;
         }
         sparepartListData[existingIndex].qty = newQty;
@@ -575,6 +675,7 @@ function addSparepart() {
     // Reset form
     document.getElementById('id_sparepart').selectedIndex = 0;
     document.getElementById('qty_sparepart').value = 1;
+    document.getElementById('sparepartHint').classList.add('hidden');
     
     showToast('Sparepart berhasil ditambahkan', 'success');
 }
@@ -599,21 +700,24 @@ function renderSparepartTable() {
 
     sparepartListData.forEach((item, index) => {
         const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-800/50 transition-colors';
         tr.innerHTML = `
-            <td>
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-cog text-secondary me-2"></i>
-                    ${item.nama}
+            <td class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center mr-3 neon-glow">
+                        <i class="fas fa-cog text-cyan-400 text-sm"></i>
+                    </div>
+                    <span class="font-medium text-dark">${item.nama}</span>
                 </div>
             </td>
-            <td class="text-center">
-                <span class="badge bg-primary">${item.qty}</span>
+            <td class="px-6 py-4 text-center">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">${item.qty}</span>
             </td>
-            <td class="text-end">Rp ${formatCurrency(item.harga)}</td>
-            <td class="text-end"><strong>Rp ${formatCurrency(item.subtotal)}</strong></td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-outline-danger" onclick="removeSparepartByIndex(${index})" title="Hapus item">
-                    <i class="fas fa-trash-alt"></i>
+            <td class="px-6 py-4 text-right font-medium text-dark">Rp ${formatCurrency(item.harga)}</td>
+            <td class="px-6 py-4 text-right font-bold neon-text">Rp ${formatCurrency(item.subtotal)}</td>
+            <td class="px-6 py-4 text-center">
+                <button class="inline-flex items-center px-3 py-1 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30" onclick="removeSparepartByIndex(${index})" title="Hapus item">
+                    <i class="fas fa-trash text-sm"></i>
                 </button>
             </td>
         `;
@@ -656,6 +760,19 @@ function calculateTotal() {
     document.getElementById('summary-total').textContent = `Rp ${formatCurrency(grandTotal)}`;
 }
 
+function updateProgress(percentage) {
+    formProgress = percentage;
+    const progressBar = document.getElementById('progressBar');
+    const progressPercentage = document.getElementById('progressPercentage');
+    
+    progressBar.style.width = percentage + '%';
+    progressPercentage.textContent = percentage + '%';
+}
+
+function updateProgressText(text) {
+    document.getElementById('progressText').textContent = text;
+}
+
 function handleSubmit(e) {
     e.preventDefault();
     
@@ -663,7 +780,7 @@ function handleSubmit(e) {
     if (!form.checkValidity()) {
         e.stopPropagation();
         form.classList.add('was-validated');
-        showToast('Mohon lengkapi semua field yang wajib', 'danger');
+        showToast('Mohon lengkapi semua field yang wajib', 'error');
         return;
     }
 
@@ -706,9 +823,29 @@ function handleSubmit(e) {
         const transaksi = result.data;
         lastTransactionId = transaksi.id_transaksi;
 
+        // Process sparepart details if any
+        if (sparepartListData.length > 0) {
+            const sparepartPromises = sparepartListData.map(sparepart => {
+                return fetch(`${API_URL}/detail_transaksi`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id_transaksi: transaksi.id_transaksi,
+                        id_sparepart: sparepart.id_sparepart,
+                        qty: sparepart.qty,
+                        total: sparepart.subtotal
+                    })
+                });
+            });
+            
+            return Promise.all(sparepartPromises);
+        }
+        return Promise.resolve();
+    })
+    .then(() => {
         // Create process record
         const prosesData = {
-            id_transaksi: transaksi.id_transaksi,
+            id_transaksi: lastTransactionId,
             id_mekanik: data.id_mekanik,
             status: "dalam_antrian",
             keterangan: "Transaksi baru dibuat dan menunggu proses",
@@ -724,10 +861,6 @@ function handleSubmit(e) {
     .then(res => {
         loadingModal.hide();
         
-        if (!res.ok) {
-            showToast('Transaksi berhasil, namun gagal membuat proses', 'warning');
-        }
-
         // Show success modal
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
@@ -743,7 +876,7 @@ function handleSubmit(e) {
     .catch(err => {
         loadingModal.hide();
         console.error('Error:', err);
-        showToast('Gagal menyimpan transaksi: ' + err.message, 'danger');
+        showToast('Gagal menyimpan transaksi: ' + err.message, 'error');
     });
 }
 
@@ -763,6 +896,10 @@ function resetForm() {
     hideAllSections();
     updateProgress(20);
     updateProgressText('Pilih SPK untuk memulai');
+    
+    // Reset radio button indicators
+    document.getElementById('berkala-dot').style.opacity = '0';
+    document.getElementById('tidak_berkala-dot').style.opacity = '0';
 }
 
 function refreshSPK() {
@@ -772,74 +909,9 @@ function refreshSPK() {
     });
 }
 
-function updateProgress(percentage) {
-    formProgress = percentage;
-    const progressBar = document.getElementById('progressBar');
-    progressBar.style.width = percentage + '%';
-    
-    if (percentage <= 25) {
-        progressBar.className = 'progress-bar bg-danger';
-    } else if (percentage <= 50) {
-        progressBar.className = 'progress-bar bg-warning';
-    } else if (percentage <= 75) {
-        progressBar.className = 'progress-bar bg-info';
-    } else {
-        progressBar.className = 'progress-bar bg-success';
-    }
-}
-
-function updateProgressText(text) {
-    document.getElementById('progressText').textContent = text;
-}
-
-function updateSparepartHint() {
-    const select = document.getElementById('id_sparepart');
-    const selectedOption = select.options[select.selectedIndex];
-    
-    if (selectedOption && selectedOption.value) {
-        const stok = selectedOption.getAttribute('data-stok');
-        const harga = selectedOption.getAttribute('data-harga');
-        showToast(`Stok: ${stok}, Harga: Rp ${formatCurrency(harga)}`, 'info');
-    }
-}
-
 // Utility functions
 function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID').format(amount || 0);
-}
-
-function showToast(message, type = 'info') {
-    // Create toast container if doesn't exist
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'position-fixed top-0 end-0 p-3';
-        container.style.zIndex = '9999';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${type} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">
-                <i class="fas fa-info-circle me-2"></i>
-                ${message}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    
-    container.appendChild(toast);
-    
-    const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
-    bsToast.show();
-    
-    toast.addEventListener('hidden.bs.toast', () => {
-        toast.remove();
-    });
 }
 </script>
 @endsection
