@@ -196,7 +196,7 @@
                 <div class="text-xs text-gray-400 capitalize">{{ ucfirst(session('user')['role'] ?? 'guest') }}</div>
               </div>
               <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center neon-glow">
-                <i class="fas fa-user text-black text-sm"></i>
+                <i class="fas fa-user text-white text-sm"></i>
               </div>
             </div>
           </div>
