@@ -697,20 +697,26 @@ function renderSparepartTable() {
     const tbody = document.getElementById('sparepartList');
     const noDataRow = document.getElementById('noSparepartRow');
 
+    // Clear all rows first
+    tbody.innerHTML = '';
+
     if (sparepartListData.length === 0) {
-        noDataRow.style.display = 'table-row';
+        // Show no data row
+        const noDataRowHtml = `
+            <tr id="noSparepartRow">
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                    <div class="flex flex-col items-center space-y-2">
+                        <i class="fas fa-info-circle text-2xl text-gray-600"></i>
+                        <span>Belum ada sparepart yang ditambahkan</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML = noDataRowHtml;
         return;
     }
 
-    noDataRow.style.display = 'none';
-    
-    // Clear existing rows except no-data row
-    Array.from(tbody.children).forEach(row => {
-        if (row.id !== 'noSparepartRow') {
-            row.remove();
-        }
-    });
-
+    // Render all sparepart items
     sparepartListData.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-800/50 transition-colors';
@@ -739,10 +745,20 @@ function renderSparepartTable() {
 }
 
 function removeSparepartByIndex(index) {
-    sparepartListData.splice(index, 1);
-    renderSparepartTable();
-    calculateTotal();
-    showToast('Sparepart dihapus', 'info');
+    if (index >= 0 && index < sparepartListData.length) {
+        // Remove item from array
+        const removedItem = sparepartListData.splice(index, 1)[0];
+        
+        // Re-render the table completely
+        renderSparepartTable();
+        
+        // Recalculate total
+        calculateTotal();
+        
+        showToast(`${removedItem.nama} berhasil dihapus`, 'info');
+    } else {
+        showToast('Gagal menghapus item - index tidak valid', 'error');
+    }
 }
 
 function clearSpareparts() {
