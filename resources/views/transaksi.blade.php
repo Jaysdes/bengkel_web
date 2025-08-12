@@ -266,6 +266,14 @@
                             <i class="fas fa-save mr-2"></i>
                             Simpan Transaksi
                         </button>
+                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="printPreview()">
+                            <i class="fas fa-print mr-2"></i>
+                            Print Preview
+                        </button>
+                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="exportTransaction()">
+                            <i class="fas fa-download mr-2"></i>
+                            Export
+                        </button>
                         <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
                             <i class="fas fa-undo mr-2"></i>
                             Reset Form
