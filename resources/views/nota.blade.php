@@ -202,11 +202,55 @@
 </style>
 
 <script>
+const API_URL = '{{ env('API_URL', 'http://localhost:8001/api') }}';
+
 function markAsPaid(transaksiId) {
     if (confirm('Apakah Anda yakin ingin menandai transaksi ini sebagai lunas?')) {
-        // Implementation for marking as paid
-        alert('Fitur pembayaran akan segera diimplementasikan');
+        fetch(`${API_URL}/transaksi/${transaksiId}/mark-paid`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            showToast('Transaksi berhasil ditandai sebagai lunas!', 'success');
+            // Reload the page to show updated status
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Gagal menandai transaksi sebagai lunas. Silakan coba lagi.', 'error');
+        });
     }
+}
+
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
 }
 </script>
 @endsection
