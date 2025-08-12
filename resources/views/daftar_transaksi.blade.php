@@ -217,7 +217,7 @@ function tampilkanTabelTransaksi() {
                     String(row.total).includes(search);
 
                 // Status filter
-                const status = row.total > 0 ? 'lunas' : 'belum_lunas';
+                const status = row.status_pembayaran || 'belum_lunas';
                 const matchesStatus = !statusFilter || status === statusFilter;
 
                 return matchesSearch && matchesStatus;
