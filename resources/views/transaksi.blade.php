@@ -459,22 +459,6 @@
     </div>
 </div>
 
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content border-0 rounded-xl dark-card neon-border">
-            <div class="modal-body text-center py-6">
-                <div class="mb-4">
-                    <div class="spinner-border text-cyan-400 neon-glow" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                <h5 class="mb-2 text-white">Menyimpan Transaksi</h5>
-                <p class="text-gray-400 mb-0">Mohon tunggu sebentar...</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
