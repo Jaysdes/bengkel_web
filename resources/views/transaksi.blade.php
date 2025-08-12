@@ -979,9 +979,7 @@ function handleSubmit(e) {
         });
     })
     .then(res => {
-        loadingModal.hide();
-        
-        // Show success modal
+        // Show success modal immediately
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
         
@@ -992,10 +990,9 @@ function handleSubmit(e) {
 
         updateProgress(100);
         updateProgressText('Transaksi berhasil disimpan!');
-        showToast('Transaksi berhasil disimpan - dapat dicetak atau diekspor', 'success');
+        showToast('Transaksi berhasil disimpan!', 'success');
     })
     .catch(err => {
-        loadingModal.hide();
         console.error('Error:', err);
         showToast('Gagal menyimpan transaksi: ' + err.message, 'error');
     });
