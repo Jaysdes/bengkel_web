@@ -250,31 +250,31 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-3">Jenis Service</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div class="form-neon bg-cyan-500/10 neon-border">
-                                    <label class="flex items-center p-4 cursor-pointer">
+                                    <label class="flex items-center p-3 cursor-pointer">
                                         <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" disabled>
-                                        <div class="w-5 h-5 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
+                                        <div class="w-4 h-4 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
                                         </div>
-                                        <div>
-                                            <div class="font-medium text-white">Service Berkala</div>
-                                            <div class="text-sm text-gray-400">Maintenance rutin terjadwal</div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-white">Service Berkala</div>
+                                            <div class="text-xs text-gray-400">Maintenance rutin terjadwal</div>
                                         </div>
-                                        <i class="fas fa-calendar-check text-cyan-400 ml-auto"></i>
+                                        <i class="fas fa-calendar-check text-cyan-400 text-sm"></i>
                                     </label>
                                 </div>
                                 <div class="form-neon bg-orange-500/10 border border-orange-500/30">
-                                    <label class="flex items-center p-4 cursor-pointer">
+                                    <label class="flex items-center p-3 cursor-pointer">
                                         <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" disabled>
-                                        <div class="w-5 h-5 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
+                                        <div class="w-4 h-4 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
                                         </div>
-                                        <div>
-                                            <div class="font-medium text-white">Service Tidak Berkala</div>
-                                            <div class="text-sm text-gray-400">Perbaikan khusus/darurat</div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-white">Service Tidak Berkala</div>
+                                            <div class="text-xs text-gray-400">Perbaikan khusus/darurat</div>
                                         </div>
-                                        <i class="fas fa-wrench text-orange-400 ml-auto"></i>
+                                        <i class="fas fa-wrench text-orange-400 text-sm"></i>
                                     </label>
                                 </div>
                             </div>
