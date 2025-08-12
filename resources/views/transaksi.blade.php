@@ -546,11 +546,11 @@ function autofillFromSPK() {
             document.getElementById('id_jasa').value = spk.id_jasa;
             document.getElementById('no_kendaraan').value = spk.no_kendaraan;
 
-            // Show sections with animation
+            // Show sections with animation - SPK input should work regardless of spare parts availability
             showSection('customerInfo');
             showSection('mechanicInfo');
             showSection('serviceInfo');
-            showSection('sparepartSection');
+            showSection('sparepartSection'); // Always show sparepart section, even if no parts available
             showSection('submitSection');
             showSection('summaryCard');
 
@@ -569,9 +569,14 @@ function autofillFromSPK() {
             const harga = parseInt(jasaSelect.selectedOptions[0]?.getAttribute('data-harga')) || 0;
             document.getElementById('harga_jasa').value = formatCurrency(harga);
             
+            // Enable service type radio buttons
+            document.getElementById('berkala').disabled = false;
+            document.getElementById('tidak_berkala').disabled = false;
+            document.getElementById('id_jasa').disabled = false;
+            
             calculateTotal();
             updateProgress(60);
-            showToast('Data SPK berhasil dimuat', 'success');
+            showToast('Data SPK berhasil dimuat - Silakan lanjutkan dengan atau tanpa sparepart', 'success');
         })
         .catch(error => {
             showToast('Gagal memuat data SPK', 'error');
