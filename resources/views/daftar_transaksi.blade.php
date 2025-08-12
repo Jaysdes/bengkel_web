@@ -315,9 +315,16 @@ function renderTable(data, startIndex) {
                     <ul class="dropdown-menu">
                         <li>
                             <a class="dropdown-item" href="/nota/${row.id_transaksi}">
-                                <i class="fas fa-receipt"></i> Lihat Nota
+                                <i class="fas fa-receipt"></i> Print Invoice
                             </a>
                         </li>
+                        ${status !== 'lunas' ? `
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="markAsPaid(${row.id_transaksi})">
+                                <i class="fas fa-money-bill-wave"></i> Mark as Paid
+                            </a>
+                        </li>
+                        ` : ''}
                         <li>
                             <a class="dropdown-item" href="#" onclick="editTransaksi(${row.id_transaksi})">
                                 <i class="fas fa-edit"></i> Edit
