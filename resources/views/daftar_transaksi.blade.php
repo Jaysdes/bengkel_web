@@ -217,7 +217,7 @@ function tampilkanTabelTransaksi() {
                     String(row.total).includes(search);
 
                 // Status filter
-                const status = row.total > 0 ? 'lunas' : 'belum_lunas';
+                const status = row.status_pembayaran || 'belum_lunas';
                 const matchesStatus = !statusFilter || status === statusFilter;
 
                 return matchesSearch && matchesStatus;
@@ -263,7 +263,7 @@ function renderTable(data, startIndex) {
     }
 
     data.forEach((row, index) => {
-        const status = row.total > 0 ? 'lunas' : 'belum_lunas';
+        const status = row.status_pembayaran || 'belum_lunas';
         const customerName = customerMap[row.id_customer] ?? `Customer #${row.id_customer}`;
         const jenisName = jenisMap[row.id_jenis] ?? `Jenis #${row.id_jenis}`;
         const mekanikName = mekanikMap[row.id_mekanik] ?? `Mekanik #${row.id_mekanik}`;
@@ -315,9 +315,16 @@ function renderTable(data, startIndex) {
                     <ul class="dropdown-menu bg-dark">
                         <li>
                             <a class="dropdown-item" href="/nota/${row.id_transaksi}">
-                                <i class="fas fa-receipt"></i> Lihat Nota
+                                <i class="fas fa-receipt"></i> Print Invoice
                             </a>
                         </li>
+                        ${status !== 'lunas' ? `
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="markAsPaid(${row.id_transaksi})">
+                                <i class="fas fa-money-bill-wave"></i> Mark as Paid
+                            </a>
+                        </li>
+                        ` : ''}
                         <li>
                             <a class="dropdown-item" href="#" onclick="editTransaksi(${row.id_transaksi})">
                                 <i class="fas fa-edit"></i> Edit
@@ -438,6 +445,34 @@ function deleteTransaksi(id) {
 
 function exportData() {
     showToast('Fitur export akan segera tersedia', 'info');
+}
+
+function markAsPaid(transaksiId) {
+    if (confirm('Apakah Anda yakin ingin menandai transaksi ini sebagai lunas?')) {
+        fetch(`${API_URL}/transaksi/${transaksiId}/mark-paid`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            showToast('Transaksi berhasil ditandai sebagai lunas!', 'success');
+            // Refresh the table data
+            setTimeout(() => {
+                tampilkanTabelTransaksi();
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Gagal menandai transaksi sebagai lunas. Silakan coba lagi.', 'danger');
+        });
+    }
 }
 
 // Utility functions

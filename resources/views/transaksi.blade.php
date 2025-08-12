@@ -250,31 +250,31 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-3">Jenis Service</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div class="form-neon bg-cyan-500/10 neon-border">
-                                    <label class="flex items-center p-4 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" >
-                                        <div class="w-5 h-5 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
+                                    <label class="flex items-center p-3 cursor-pointer">
+                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" disabled>
+                                        <div class="w-4 h-4 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
                                         </div>
-                                        <div>
-                                            <div class="font-medium text-white">Service Berkala</div>
-                                            <div class="text-sm text-gray-400">Maintenance rutin terjadwal</div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-white">Service Berkala</div>
+                                            <div class="text-xs text-gray-400">Maintenance rutin terjadwal</div>
                                         </div>
-                                        <i class="fas fa-calendar-check text-cyan-400 ml-auto"></i>
+                                        <i class="fas fa-calendar-check text-cyan-400 text-sm"></i>
                                     </label>
                                 </div>
                                 <div class="form-neon bg-orange-500/10 border border-orange-500/30">
-                                    <label class="flex items-center p-4 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" >
-                                        <div class="w-5 h-5 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
+                                    <label class="flex items-center p-3 cursor-pointer">
+                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" disabled>
+                                        <div class="w-4 h-4 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-1.5 h-1.5 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
                                         </div>
-                                        <div>
-                                            <div class="font-medium text-white">Service Tidak Berkala</div>
-                                            <div class="text-sm text-gray-400">Perbaikan khusus/darurat</div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-white">Service Tidak Berkala</div>
+                                            <div class="text-xs text-gray-400">Perbaikan khusus/darurat</div>
                                         </div>
-                                        <i class="fas fa-wrench text-orange-400 ml-auto"></i>
+                                        <i class="fas fa-wrench text-orange-400 text-sm"></i>
                                     </label>
                                 </div>
                             </div>
@@ -358,14 +358,6 @@
                         <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
                             <i class="fas fa-save mr-2"></i>
                             Simpan Transaksi
-                        </button>
-                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="printPreview()">
-                            <i class="fas fa-print mr-2"></i>
-                            Print Preview
-                        </button>
-                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="exportTransaction()">
-                            <i class="fas fa-download mr-2"></i>
-                            Export
                         </button>
                         <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
                             <i class="fas fa-undo mr-2"></i>
@@ -467,22 +459,6 @@
     </div>
 </div>
 
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content border-0 rounded-xl dark-card neon-border">
-            <div class="modal-body text-center py-6">
-                <div class="mb-4">
-                    <div class="spinner-border text-cyan-400 neon-glow" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-                <h5 class="mb-2 text-white">Menyimpan Transaksi</h5>
-                <p class="text-gray-400 mb-0">Mohon tunggu sebentar...</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
@@ -929,8 +905,7 @@ function handleSubmit(e) {
     }
     
     // Show loading modal
-    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-    loadingModal.show();
+    showToast('Menyimpan transaksi...', 'info');
     
     updateProgress(80);
     updateProgressText('Menyimpan transaksi...');
@@ -1004,9 +979,7 @@ function handleSubmit(e) {
         });
     })
     .then(res => {
-        loadingModal.hide();
-        
-        // Show success modal
+        // Show success modal immediately
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
         
@@ -1017,10 +990,9 @@ function handleSubmit(e) {
 
         updateProgress(100);
         updateProgressText('Transaksi berhasil disimpan!');
-        showToast('Transaksi berhasil disimpan - dapat dicetak atau diekspor', 'success');
+        showToast('Transaksi berhasil disimpan!', 'success');
     })
     .catch(err => {
-        loadingModal.hide();
         console.error('Error:', err);
         showToast('Gagal menyimpan transaksi: ' + err.message, 'error');
     });
@@ -1060,225 +1032,6 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID').format(amount || 0);
 }
 
-// Print Preview Function - prints without header and sidebar
-function printPreview() {
-    // Check if there's transaction data to print
-    if (!lastTransactionId) {
-        showToast('Belum ada transaksi untuk dicetak. Simpan transaksi terlebih dahulu.', 'warning');
-        return;
-    }
-
-    // Create print window
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    
-    // Get current transaction data
-    const customer = document.getElementById('id_customer').selectedOptions[0]?.text || '';
-    const noKendaraan = document.getElementById('no_kendaraan').value || '';
-    const mekanik = document.getElementById('id_mekanik').selectedOptions[0]?.text || '';
-    const hargaJasa = document.getElementById('harga_jasa').value || '0';
-    
-    // Calculate sparepart total
-    let sparepartTotal = 0;
-    let sparepartItems = '';
-    let itemNo = 2; // Start from 2 since jasa is item 1
-    
-    sparepartListData.forEach(item => {
-        sparepartTotal += item.subtotal;
-        sparepartItems += `
-            <tr>
-                <td class="border px-4 py-2 text-center">${itemNo++}</td>
-                <td class="border px-4 py-2">${item.nama}</td>
-                <td class="border px-4 py-2 text-center">${item.qty}</td>
-                <td class="border px-4 py-2 text-right">Rp ${formatCurrency(item.harga)}</td>
-                <td class="border px-4 py-2 text-right">Rp ${formatCurrency(item.subtotal)}</td>
-            </tr>
-        `;
-    });
-    
-    const hargaJasaNum = parseInt(hargaJasa.replace(/[^\d]/g, '')) || 0;
-    const grandTotal = hargaJasaNum + sparepartTotal;
-    
-    // Generate print content
-    const printContent = `
-        <!DOCTYPE html>
-        <html lang="id">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Invoice Transaksi #${String(lastTransactionId).padStart(4, '0')}</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; font-size: 12px; }
-                .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-                .header h1 { margin: 0; color: #333; font-size: 24px; }
-                .header p { margin: 5px 0; color: #666; }
-                .invoice-info { display: flex; justify-content: space-between; margin-bottom: 30px; }
-                .info-block h3 { margin: 0 0 10px 0; color: #333; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                th { background-color: #f2f2f2; font-weight: bold; }
-                .text-center { text-align: center; }
-                .text-right { text-align: right; }
-                .total-row { background-color: #f8f8f8; font-weight: bold; }
-                .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 20px; }
-                @media print {
-                    body { margin: 0; padding: 15px; }
-                    .no-print { display: none !important; }
-                }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1><i class="fas fa-wrench"></i> Bengkel Motor Jaya</h1>
-                <p>Jl. Contoh No. 123, Jakarta | Telp: (021) 1234-5678</p>
-                <p>Email: info@bengkelmotorjaya.com</p>
-            </div>
-
-            <div class="invoice-info" style="display: flex; justify-content: space-between;">
-                <div class="info-block" style="width: 45%;">
-                    <h3>Informasi Invoice</h3>
-                    <p><strong>No Invoice:</strong> INV-${String(lastTransactionId).padStart(6, '0')}</p>
-                    <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID')}</p>
-                    <p><strong>Waktu:</strong> ${new Date().toLocaleTimeString('id-ID')}</p>
-                </div>
-                <div class="info-block" style="width: 45%;">
-                    <h3>Data Customer</h3>
-                    <p><strong>Customer:</strong> ${customer.split(' - ')[0] || 'N/A'}</p>
-                    <p><strong>No Kendaraan:</strong> ${noKendaraan}</p>
-                    <p><strong>Mekanik:</strong> ${mekanik}</p>
-                </div>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th width="8%">No</th>
-                        <th width="45%">Deskripsi</th>
-                        <th width="10%">Qty</th>
-                        <th width="18%">Harga Satuan</th>
-                        <th width="19%">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-center">1</td>
-                        <td>Jasa Service</td>
-                        <td class="text-center">1</td>
-                        <td class="text-right">Rp ${formatCurrency(hargaJasaNum)}</td>
-                        <td class="text-right">Rp ${formatCurrency(hargaJasaNum)}</td>
-                    </tr>
-                    ${sparepartItems}
-                    <tr class="total-row">
-                        <td colspan="4" class="text-right"><strong>Subtotal Jasa:</strong></td>
-                        <td class="text-right"><strong>Rp ${formatCurrency(hargaJasaNum)}</strong></td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="4" class="text-right"><strong>Subtotal Sparepart:</strong></td>
-                        <td class="text-right"><strong>Rp ${formatCurrency(sparepartTotal)}</strong></td>
-                    </tr>
-                    <tr class="total-row" style="background-color: #e8f5e8;">
-                        <td colspan="4" class="text-right"><strong>GRAND TOTAL:</strong></td>
-                        <td class="text-right"><strong>Rp ${formatCurrency(grandTotal)}</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="footer">
-                <p>Terima kasih atas kepercayaan Anda menggunakan jasa Bengkel Motor Jaya</p>
-                <p>Kepuasan Anda adalah prioritas kami</p>
-                <p style="margin-top: 15px;"><em>Invoice ini dicetak pada: ${new Date().toLocaleString('id-ID')}</em></p>
-            </div>
-
-            <div class="no-print" style="margin-top: 30px; text-align: center;">
-                <button onclick="window.print()" style="background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer;">Print Invoice</button>
-                <button onclick="window.close()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer;">Close</button>
-            </div>
-        </body>
-        </html>
-    `;
-    
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    
-    // Auto focus on print window
-    printWindow.focus();
-    
-    showToast('Print preview telah dibuka di tab baru', 'success');
-}
-
-// Export Transaction Function
-function exportTransaction() {
-    // Check if there's transaction data to export
-    if (!lastTransactionId) {
-        showToast('Belum ada transaksi untuk diekspor. Simpan transaksi terlebih dahulu.', 'warning');
-        return;
-    }
-
-    try {
-        // Prepare transaction data for export
-        const customer = document.getElementById('id_customer').selectedOptions[0]?.text || '';
-        const noKendaraan = document.getElementById('no_kendaraan').value || '';
-        const mekanik = document.getElementById('id_mekanik').selectedOptions[0]?.text || '';
-        const hargaJasa = document.getElementById('harga_jasa').value || '0';
-        const hargaJasaNum = parseInt(hargaJasa.replace(/[^\d]/g, '')) || 0;
-        
-        let sparepartTotal = 0;
-        sparepartListData.forEach(item => {
-            sparepartTotal += item.subtotal;
-        });
-        
-        const grandTotal = hargaJasaNum + sparepartTotal;
-        
-        // Create CSV content
-        let csvContent = "data:text/csv;charset=utf-8,";
-        
-        // Add header information
-        csvContent += "INVOICE BENGKEL MOTOR JAYA\n";
-        csvContent += "Jl. Contoh No. 123, Jakarta\n";
-        csvContent += "Telp: (021) 1234-5678\n\n";
-        
-        csvContent += "No Invoice,INV-" + String(lastTransactionId).padStart(6, '0') + "\n";
-        csvContent += "Tanggal," + new Date().toLocaleDateString('id-ID') + "\n";
-        csvContent += "Waktu," + new Date().toLocaleTimeString('id-ID') + "\n";
-        csvContent += "Customer," + customer.split(' - ')[0] + "\n";
-        csvContent += "No Kendaraan," + noKendaraan + "\n";
-        csvContent += "Mekanik," + mekanik + "\n\n";
-        
-        // Add items table header
-        csvContent += "No,Deskripsi,Qty,Harga Satuan,Subtotal\n";
-        
-        // Add service item
-        csvContent += "1,Jasa Service,1," + hargaJasaNum + "," + hargaJasaNum + "\n";
-        
-        // Add sparepart items
-        let itemNo = 2;
-        sparepartListData.forEach(item => {
-            csvContent += itemNo + "," + item.nama + "," + item.qty + "," + item.harga + "," + item.subtotal + "\n";
-            itemNo++;
-        });
-        
-        // Add totals
-        csvContent += "\n";
-        csvContent += "Subtotal Jasa,," + hargaJasaNum + "\n";
-        csvContent += "Subtotal Sparepart,," + sparepartTotal + "\n";
-        csvContent += "GRAND TOTAL,," + grandTotal + "\n";
-        
-        // Create download link
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `transaksi_${lastTransactionId}_${new Date().toISOString().slice(0,10)}.csv`);
-        document.body.appendChild(link);
-        
-        // Trigger download
-        link.click();
-        document.body.removeChild(link);
-        
-        showToast('Data transaksi berhasil diekspor ke file CSV', 'success');
-        
-    } catch (error) {
-        console.error('Export error:', error);
-        showToast('Gagal mengekspor data transaksi', 'error');
-    }
 }
 </script>
 @endsection
