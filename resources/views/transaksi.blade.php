@@ -806,25 +806,45 @@ function handleSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
-    if (!form.checkValidity()) {
-        e.stopPropagation();
-        form.classList.add('was-validated');
-        showToast('Mohon lengkapi semua field yang wajib', 'error');
+    const formData = new FormData(form);
+    
+    // Custom validation - SPK should be submittable even without spare parts
+    const requiredFields = ['id_spk', 'id_mekanik'];
+    const missingFields = [];
+    
+    requiredFields.forEach(field => {
+        const element = document.getElementById(field);
+        if (!element || !element.value.trim()) {
+            missingFields.push(field);
+            element?.classList.add('is-invalid');
+        } else {
+            element?.classList.remove('is-invalid');
+        }
+    });
+    
+    // Check if jenis service is selected
+    const jenisServiceChecked = document.querySelector('input[name="jenis_service"]:checked');
+    if (!jenisServiceChecked) {
+        missingFields.push('jenis_service');
+        showToast('Silakan pilih jenis service (Berkala atau Tidak Berkala)', 'warning');
+    }
+    
+    if (missingFields.length > 0) {
+        showToast('Mohon lengkapi field: SPK, Mekanik, dan Jenis Service', 'error');
+        updateProgress(70);
         return;
     }
-
-    if (sparepartListData.length === 0) {
-        if (!confirm('Tidak ada sparepart yang ditambahkan. Lanjutkan dengan hanya jasa saja?')) {
-            return;
-        }
-    }
-
+    
     // Show loading modal
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
+    
+    updateProgress(80);
+    updateProgressText('Menyimpan transaksi...');
 
+    // Get form values
     const hargaJasaText = document.getElementById('harga_jasa').value.replace(/[^\d]/g, '');
-    const hargaSparepart = sparepartListData.reduce((sum, item) => sum + item.subtotal, 0);
+    const hargaSparepart = sparepartListData.reduce((total, item) => total + item.subtotal, 0);
 
     const data = {
         id_spk: parseInt(document.getElementById('id_spk').value),
@@ -835,7 +855,8 @@ function handleSubmit(e) {
         id_mekanik: parseInt(document.getElementById('id_mekanik').value),
         harga_jasa: parseInt(hargaJasaText) || 0,
         harga_sparepart: hargaSparepart,
-        total: parseInt(hargaJasaText) + hargaSparepart
+        total: parseInt(hargaJasaText) + hargaSparepart,
+        jenis_service: jenisServiceChecked.value
     };
 
     // Submit transaction
@@ -852,7 +873,7 @@ function handleSubmit(e) {
         const transaksi = result.data;
         lastTransactionId = transaksi.id_transaksi;
 
-        // Process sparepart details if any
+        // Process sparepart details if any (optional - not required)
         if (sparepartListData.length > 0) {
             const sparepartPromises = sparepartListData.map(sparepart => {
                 return fetch(`${API_URL}/detail_transaksi`, {
@@ -877,7 +898,9 @@ function handleSubmit(e) {
             id_transaksi: lastTransactionId,
             id_mekanik: data.id_mekanik,
             status: "dalam_antrian",
-            keterangan: "Transaksi baru dibuat dan menunggu proses",
+            keterangan: sparepartListData.length > 0 ? 
+                `Transaksi dengan ${sparepartListData.length} sparepart` : 
+                "Transaksi tanpa sparepart - hanya jasa service",
             waktu_mulai: new Date().toISOString()
         };
 
@@ -901,6 +924,7 @@ function handleSubmit(e) {
 
         updateProgress(100);
         updateProgressText('Transaksi berhasil disimpan!');
+        showToast('Transaksi berhasil disimpan - dapat dicetak atau diekspor', 'success');
     })
     .catch(err => {
         loadingModal.hide();
