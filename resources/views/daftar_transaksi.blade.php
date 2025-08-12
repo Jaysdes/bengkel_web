@@ -263,7 +263,7 @@ function renderTable(data, startIndex) {
     }
 
     data.forEach((row, index) => {
-        const status = row.total > 0 ? 'lunas' : 'belum_lunas';
+        const status = row.status_pembayaran || 'belum_lunas';
         const customerName = customerMap[row.id_customer] ?? `Customer #${row.id_customer}`;
         const jenisName = jenisMap[row.id_jenis] ?? `Jenis #${row.id_jenis}`;
         const mekanikName = mekanikMap[row.id_mekanik] ?? `Mekanik #${row.id_mekanik}`;
