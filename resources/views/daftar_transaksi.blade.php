@@ -308,11 +308,11 @@ function renderTable(data, startIndex) {
                 </span>
             </td>
             <td>
-                <div class="dropdown">
+                <div class="dropdown ">
                     <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu bg-dark">
                         <li>
                             <a class="dropdown-item" href="/nota/${row.id_transaksi}">
                                 <i class="fas fa-receipt"></i> Lihat Nota

@@ -101,17 +101,17 @@
             <h1 class="page-title">
                 <i class="fas fa-cash-register mr-3"></i>
                 Transaksi Bengkel
-            </h1>
-            <p class="text-gray-400 text-lg">
-                Kelola transaksi service kendaraan dengan mudah dan efisien
-            </p>
-        </div>
-        <div class="flex items-center space-x-3 mt-4 lg:mt-0">
+            </h1> <div class="flex items-center space-y-3 mt-3 lg:mt-6s">
             <a href="{{ url('/daftar-transaksi') }}" class="btn-neon">
                 <i class="fas fa-list"></i>
                 Lihat Daftar Transaksi
             </a>
         </div>
+            <p class="text-gray-400 text-lg">
+                Kelola transaksi service kendaraan dengan mudah dan efisien
+            </p>
+        </div>
+       
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 ">
@@ -253,7 +253,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="form-neon bg-cyan-500/10 neon-border">
                                     <label class="flex items-center p-4 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" disabled>
+                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" >
                                         <div class="w-5 h-5 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
                                             <div class="w-2 h-2 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
                                         </div>
@@ -266,7 +266,7 @@
                                 </div>
                                 <div class="form-neon bg-orange-500/10 border border-orange-500/30">
                                     <label class="flex items-center p-4 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" disabled>
+                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" >
                                         <div class="w-5 h-5 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
                                             <div class="w-2 h-2 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
                                         </div>
@@ -944,7 +944,7 @@ function handleSubmit(e) {
         id_customer: parseInt(document.getElementById('id_customer').value),
         id_jenis: parseInt(document.getElementById('id_jasa').value),
         no_kendaraan: document.getElementById('no_kendaraan').value,
-        telepon: document.getElementById('telp_customer').value,
+        telepon: document.getElementById('no_customer').value,
         id_mekanik: parseInt(document.getElementById('id_mekanik').value),
         harga_jasa: parseInt(hargaJasaText) || 0,
         harga_sparepart: hargaSparepart,
