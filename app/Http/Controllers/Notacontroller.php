@@ -162,4 +162,4 @@ class NotaController extends Controller
         $transaksi = $this->nota($id);
         return view('nota-print', $transaksi->getData());
     }
-} 
+}

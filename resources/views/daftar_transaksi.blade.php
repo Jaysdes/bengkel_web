@@ -1,5 +1,98 @@
 @extends('layouts.app')
 
+@section('styles')
+<style>
+/* Print-specific styles to hide header and sidebar */
+@media print {
+    .fixed, .navbar, .sidebar, nav, header, 
+    .w-64, .bg-gray-900, .z-40, .z-10, .z-50,
+    [x-data], .hamburger, .btn:not(.print-visible),
+    .no-print {
+        display: none !important;
+    }
+    
+    body { 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        background: white !important;
+        color: black !important;
+    }
+    
+    .main-content {
+        margin: 0 !important;
+        padding: 20px !important;
+        max-width: 100% !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+    
+    .form-neon, .card {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        color: black !important;
+    }
+    
+    .btn-neon, .btn-neon-solid {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #333 !important;
+        box-shadow: none !important;
+    }
+    
+    .input-neon {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #333 !important;
+        box-shadow: none !important;
+    }
+    
+    .table-neon {
+        background: white !important;
+        border: 1px solid #333 !important;
+    }
+    
+    .table-neon th,
+    .table-neon td {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #333 !important;
+    }
+    
+    .text-white,
+    .neon-text,
+    .text-cyan-400,
+    .text-blue-400 {
+        color: black !important;
+    }
+    
+    .page-title {
+        color: black !important;
+        background: none !important;
+        -webkit-background-clip: initial !important;
+        -webkit-text-fill-color: initial !important;
+    }
+}
+
+/* Additional transaction-specific styles */
+.transaction-highlight {
+    background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border-left: 4px solid var(--neon-blue);
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.sparepart-item:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    transform: translateX(5px);
+    transition: all 0.3s ease;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid">
     <div class="row mb-4">

@@ -4,7 +4,7 @@
 <div class="container">
     <h4 class="mb-4 font-bold text-xl">Laporan & Pembayaran</h4>
 
-    <!-- Search & Filter -->
+    <!-- Search -->
     <div class="row mb-3">
         <div class="col-md-4">
             <input type="text" id="searchInput" class="form-control" placeholder="Cari transaksi...">
@@ -42,22 +42,29 @@
     let filteredData = [];
     let currentPage = 1;
     const rowsPerPage = 5;
-
+    const customerMap = {};
     document.addEventListener('DOMContentLoaded', () => {
         loadLaporan();
         document.getElementById('searchInput').addEventListener('input', searchData);
     });
 
     async function loadLaporan() {
-        const res = await fetch(`${apiBase}/transaksi`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const result = await res.json();
-        allData = result.data || [];
-        filteredData = allData;
-        renderTable();
-        renderPagination();
-        updateTableInfo();
+        try {
+            const res = await fetch(`${apiBase}/transaksi`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error(`Gagal memuat data (${res.status})`);
+            const result = await res.json();
+            allData = Array.isArray(result.data) ? result.data : [];
+            filteredData = allData;
+            currentPage = 1;
+            renderTable();
+            renderPagination();
+            updateTableInfo();
+        } catch (err) {
+            console.error(err);
+            alert('Gagal memuat laporan transaksi.');
+        }
     }
 
     function renderTable() {
@@ -67,20 +74,25 @@
         const start = (currentPage - 1) * rowsPerPage;
         const paginatedItems = filteredData.slice(start, start + rowsPerPage);
 
+        if (paginatedItems.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data</td></tr>`;
+            return;
+        }
+
         paginatedItems.forEach(item => {
-            const status = item.status_pembayaran === 'lunas'
+            const status = item.status_pembayaran?.toLowerCase() === 'lunas'
                 ? '<span class="badge bg-success">Lunas</span>'
                 : '<span class="badge bg-danger">Belum Lunas</span>';
-
+            const customerName = customerMap[item.id_customer] ?? item.id_customer;
             const row = `
                 <tr>
-                    <td>${item.id_transaksi}</td>
-                    <td>${item.customer?.nama || '-'}</td>
-                    <td>${item.no_kendaraan}</td>
-                    <td>Rp ${formatRupiah(item.total)}</td>
+                    <td>${item.id_transaksi || '-'}</td>
+                    <td>${customerName}</td>
+                    <td>${item.no_kendaraan || '-'}</td>
+                    <td>${formatRupiah(item.total || 0)}</td>
                     <td>${status}</td>
                     <td>
-                        ${item.status_pembayaran !== 'lunas' 
+                        ${item.status_pembayaran?.toLowerCase() !== 'lunas' 
                             ? `<button class="btn btn-sm btn-primary me-1" onclick="validasiPembayaran(${item.id_transaksi})">Validasi</button>` 
                             : ''
                         }
@@ -112,14 +124,14 @@
 
     function updateTableInfo() {
         const total = filteredData.length;
-        const start = (currentPage - 1) * rowsPerPage + 1;
-        let end = start + rowsPerPage - 1;
+        const start = total ? (currentPage - 1) * rowsPerPage + 1 : 0;
+        let end = total ? start + rowsPerPage - 1 : 0;
         if (end > total) end = total;
 
         document.getElementById('tableInfo').innerText =
             total === 0
-                ? "Showing 0 to 0 of 0 entries"
-                : `Showing ${start} to ${end} of ${total} entries`;
+                ? "Menampilkan 0 dari 0 data"
+                : `Menampilkan ${start} sampai ${end} dari ${total} data`;
     }
 
     function searchData() {
@@ -138,22 +150,26 @@
     async function validasiPembayaran(id) {
         if (!confirm("Apakah Anda yakin ingin memvalidasi pembayaran ini?")) return;
 
-        const res = await fetch(`${apiBase}/transaksi/${id}/bayar`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-        });
-        const result = await res.json();
-        alert(result.message || "Pembayaran divalidasi");
-        loadLaporan();
+        try {
+            const res = await fetch(`${apiBase}/transaksi/${id}/bayar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            alert(result.message || "Pembayaran berhasil divalidasi");
+            loadLaporan();
+        } catch (err) {
+            console.error(err);
+            alert("Gagal memvalidasi pembayaran.");
+        }
     }
 
     function cetakNota(id) {
-        // Route Laravel, bukan API Go langsung
         window.open(`/nota/${id}`, '_blank');
     }
 
     function formatRupiah(angka) {
-        return new Intl.NumberFormat('id-ID', { style: 'decimal' }).format(angka);
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
     }
 </script>
 @endsection

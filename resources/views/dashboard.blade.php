@@ -25,6 +25,57 @@
         </div>
     </div>
 
+    <!-- Date Filter Section -->
+    <div class="stat-card bg-dark p-6">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between space-y-4 lg:space-y-0">
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-2">
+                    <i class="fas fa-calendar-alt mr-2 text-cyan-400"></i>
+                    Filter Data by Date Range
+                </h3>
+                <p class="text-sm text-gray-400">Select date range to filter dashboard statistics and charts</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <div class="flex flex-col">
+                    <label for="start_date" class="block text-sm font-medium text-gray-300 mb-1">Start Date</label>
+                    <input type="date" 
+                           id="start_date" 
+                           name="start_date" 
+                           value="{{ $startDate }}" 
+                           class="input-neon w-full sm:w-auto">
+                </div>
+                <div class="flex flex-col">
+                    <label for="end_date" class="block text-sm font-medium text-gray-300 mb-1">End Date</label>
+                    <input type="date" 
+                           id="end_date" 
+                           name="end_date" 
+                           value="{{ $endDate }}" 
+                           class="input-neon w-full sm:w-auto">
+                </div>
+                <div class="flex flex-col justify-end">
+                    <button onclick="applyDateFilter()" class="btn-neon">
+                        <i class="fas fa-filter mr-2"></i>
+                        Apply Filter
+                    </button>
+                </div>
+                <div class="flex flex-col justify-end">
+                    <button onclick="resetDateFilter()" class="btn btn-outline-secondary text-white border-gray-600 hover:bg-gray-600">
+                        <i class="fas fa-undo mr-2"></i>
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current Filter Display -->
+        <div class="mt-4 pt-4 border-t border-gray-700">
+            <div class="flex items-center text-sm text-gray-400">
+                <i class="fas fa-info-circle mr-2 text-cyan-400"></i>
+                <span>Currently showing data from <strong class="text-white">{{ \Carbon\Carbon::parse($startDate)->format('d M Y') }}</strong> to <strong class="text-white">{{ \Carbon\Carbon::parse($endDate)->format('d M Y') }}</strong></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Users Card -->
@@ -352,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCharts();
     updateClock();
     setInterval(updateClock, 1000);
+    setupDateFilterListeners();
 });
 
 function initializeCharts() {
@@ -514,6 +566,66 @@ function refreshDashboard() {
 function showSystemInfo() {
     const modal = new bootstrap.Modal(document.getElementById('systemInfoModal'));
     modal.show();
+}
+
+// Date Filter Functions
+function applyDateFilter() {
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    
+    // Validate dates
+    if (!startDate || !endDate) {
+        showToast('Please select both start and end dates', 'warning');
+        return;
+    }
+    
+    if (new Date(startDate) > new Date(endDate)) {
+        showToast('Start date cannot be later than end date', 'error');
+        return;
+    }
+    
+    // Show loading and apply filter
+    showLoading();
+    const baseUrl = "{{ route('dashboard') }}";
+    const filterUrl = `${baseUrl}?start_date=${startDate}&end_date=${endDate}`;
+    
+    // Add a small delay for better UX
+    setTimeout(() => {
+        window.location.href = filterUrl;
+    }, 500);
+}
+
+function resetDateFilter() {
+    showLoading();
+    const baseUrl = "{{ route('dashboard') }}";
+    
+    // Reset to default date range (last 7 days to today)
+    setTimeout(() => {
+        window.location.href = baseUrl;
+    }, 500);
+}
+
+// Auto-apply filter when dates change (optional enhancement)
+function setupDateFilterListeners() {
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    
+    // Add change listeners for real-time validation
+    startDateInput.addEventListener('change', function() {
+        const endDate = endDateInput.value;
+        if (endDate && new Date(this.value) > new Date(endDate)) {
+            showToast('Start date cannot be later than end date', 'warning');
+            this.focus();
+        }
+    });
+    
+    endDateInput.addEventListener('change', function() {
+        const startDate = startDateInput.value;
+        if (startDate && new Date(startDate) > new Date(this.value)) {
+            showToast('End date cannot be earlier than start date', 'warning');
+            this.focus();
+        }
+    });
 }
 
 // Animate stats on page load

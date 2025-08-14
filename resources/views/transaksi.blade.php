@@ -1,98 +1,5 @@
 @extends('layouts.app')
 
-@section('styles')
-<style>
-/* Print-specific styles to hide header and sidebar */
-@media print {
-    .fixed, .navbar, .sidebar, nav, header, 
-    .w-64, .bg-gray-900, .z-40, .z-10, .z-50,
-    [x-data], .hamburger, .btn:not(.print-visible),
-    .no-print {
-        display: none !important;
-    }
-    
-    body { 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        background: white !important;
-        color: black !important;
-    }
-    
-    .main-content {
-        margin: 0 !important;
-        padding: 20px !important;
-        max-width: 100% !important;
-        border: none !important;
-        border-radius: 0 !important;
-        background: white !important;
-        color: black !important;
-        box-shadow: none !important;
-    }
-    
-    .form-neon, .card {
-        background: white !important;
-        border: 1px solid #ddd !important;
-        box-shadow: none !important;
-        color: black !important;
-    }
-    
-    .btn-neon, .btn-neon-solid {
-        background: white !important;
-        color: black !important;
-        border: 1px solid #333 !important;
-        box-shadow: none !important;
-    }
-    
-    .input-neon {
-        background: white !important;
-        color: black !important;
-        border: 1px solid #333 !important;
-        box-shadow: none !important;
-    }
-    
-    .table-neon {
-        background: white !important;
-        border: 1px solid #333 !important;
-    }
-    
-    .table-neon th,
-    .table-neon td {
-        background: white !important;
-        color: black !important;
-        border: 1px solid #333 !important;
-    }
-    
-    .text-white,
-    .neon-text,
-    .text-cyan-400,
-    .text-blue-400 {
-        color: black !important;
-    }
-    
-    .page-title {
-        color: black !important;
-        background: none !important;
-        -webkit-background-clip: initial !important;
-        -webkit-text-fill-color: initial !important;
-    }
-}
-
-/* Additional transaction-specific styles */
-.transaction-highlight {
-    background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-    border-left: 4px solid var(--neon-blue);
-    padding: 1rem;
-    margin: 1rem 0;
-}
-
-.sparepart-item:hover {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    transform: translateX(5px);
-    transition: all 0.3s ease;
-}
-</style>
-@endsection
-
 @section('content')
 <div class="space-y-6">
     <!-- Page Header -->
@@ -235,7 +142,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Jenis Jasa</label>
-                                <select id="id_jasa" class="input-neon w-full" disabled>
+                                <select id="id_jasa" class="input-neon w-full">
                                     <option value="">Loading...</option>
                                 </select>
                             </div>
@@ -253,7 +160,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div class="form-neon bg-cyan-500/10 neon-border">
                                     <label class="flex items-center p-3 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" disabled>
+                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" enable>
                                         <div class="w-4 h-4 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
                                             <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
                                         </div>
@@ -266,7 +173,7 @@
                                 </div>
                                 <div class="form-neon bg-orange-500/10 border border-orange-500/30">
                                     <label class="flex items-center p-3 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" disabled>
+                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" enable>
                                         <div class="w-4 h-4 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
                                             <div class="w-1.5 h-1.5 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
                                         </div>
@@ -354,17 +261,17 @@
 
                 <!-- Submit Actions -->
                 <div class="form-neon bg-dark" id="submitSection" style="display: none;">
-                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                        <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
-                            <i class="fas fa-save mr-2"></i>
-                            Simpan Transaksi
-                        </button>
-                        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
-                            <i class="fas fa-undo mr-2"></i>
-                            Reset Form
-                        </button>
-                    </div>
-                </div>
+    <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
+        <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
+            <i class="fas fa-save mr-2"></i>
+            Simpan Transaksi
+        </button>
+        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
+            <i class="fas fa-undo mr-2"></i>
+            Reset Form
+        </button>
+    </div>
+</div>
             </form>
         </div>
 
@@ -870,17 +777,14 @@ function updateProgress(percentage) {
 function updateProgressText(text) {
     document.getElementById('progressText').textContent = text;
 }
-
 function handleSubmit(e) {
     e.preventDefault();
-    
+
     const form = e.target;
-    const formData = new FormData(form);
-    
-    // Custom validation - SPK should be submittable even without spare parts
     const requiredFields = ['id_spk', 'id_mekanik'];
     const missingFields = [];
-    
+
+    // Validasi input wajib
     requiredFields.forEach(field => {
         const element = document.getElementById(field);
         if (!element || !element.value.trim()) {
@@ -890,44 +794,40 @@ function handleSubmit(e) {
             element?.classList.remove('is-invalid');
         }
     });
-    
-    // Check if jenis service is selected
+
+    // Validasi jenis service
     const jenisServiceChecked = document.querySelector('input[name="jenis_service"]:checked');
     if (!jenisServiceChecked) {
         missingFields.push('jenis_service');
         showToast('Silakan pilih jenis service (Berkala atau Tidak Berkala)', 'warning');
     }
-    
+
     if (missingFields.length > 0) {
         showToast('Mohon lengkapi field: SPK, Mekanik, dan Jenis Service', 'error');
         updateProgress(70);
         return;
     }
-    
-    // Show loading modal
-    showToast('Menyimpan transaksi...', 'info');
-    
-    updateProgress(80);
-    updateProgressText('Menyimpan transaksi...');
 
-    // Get form values
+    // Hitung harga
     const hargaJasaText = document.getElementById('harga_jasa').value.replace(/[^\d]/g, '');
+    const hargaJasa = parseInt(hargaJasaText) || 0;
     const hargaSparepart = sparepartListData.reduce((total, item) => total + item.subtotal, 0);
 
+    // Data sesuai struct di Golang
     const data = {
         id_spk: parseInt(document.getElementById('id_spk').value),
         id_customer: parseInt(document.getElementById('id_customer').value),
         id_jenis: parseInt(document.getElementById('id_jasa').value),
         no_kendaraan: document.getElementById('no_kendaraan').value,
-        telepon: document.getElementById('no_customer').value,
+        telepon: document.getElementById('telepon').value,
         id_mekanik: parseInt(document.getElementById('id_mekanik').value),
-        harga_jasa: parseInt(hargaJasaText) || 0,
+        harga_jasa: hargaJasa,
         harga_sparepart: hargaSparepart,
-        total: parseInt(hargaJasaText) + hargaSparepart,
         jenis_service: jenisServiceChecked.value
+        // total tidak perlu dikirim, backend hitung otomatis
     };
 
-    // Submit transaction
+    // Kirim ke API
     fetch(`${API_URL}/transaksi`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -938,52 +838,12 @@ function handleSubmit(e) {
         return res.json();
     })
     .then(result => {
-        const transaksi = result.data;
-        lastTransactionId = transaksi.id_transaksi;
+        lastTransactionId = result.data.id_transaksi;
 
-        // Process sparepart details if any (optional - not required)
-        if (sparepartListData.length > 0) {
-            const sparepartPromises = sparepartListData.map(sparepart => {
-                return fetch(`${API_URL}/detail_transaksi`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id_transaksi: transaksi.id_transaksi,
-                        id_sparepart: sparepart.id_sparepart,
-                        qty: sparepart.qty,
-                        total: sparepart.subtotal
-                    })
-                });
-            });
-            
-            return Promise.all(sparepartPromises);
-        }
-        return Promise.resolve();
-    })
-    .then(() => {
-        // Create process record
-        const prosesData = {
-            id_transaksi: lastTransactionId,
-            id_mekanik: data.id_mekanik,
-            status: "dalam_antrian",
-            keterangan: sparepartListData.length > 0 ? 
-                `Transaksi dengan ${sparepartListData.length} sparepart` : 
-                "Transaksi tanpa sparepart - hanya jasa service",
-            waktu_mulai: new Date().toISOString()
-        };
-
-        return fetch(`${API_URL}/proses`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(prosesData)
-        });
-    })
-    .then(res => {
-        // Show success modal immediately
+        // Modal sukses
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
-        
-        // Setup view invoice button
+
         document.getElementById('viewInvoiceBtn').onclick = function() {
             window.location.href = `/nota/${lastTransactionId}`;
         };
@@ -996,13 +856,6 @@ function handleSubmit(e) {
         console.error('Error:', err);
         showToast('Gagal menyimpan transaksi: ' + err.message, 'error');
     });
-}
-
-function createNewTransaction() {
-    resetForm();
-    const successModal = bootstrap.Modal.getInstance(document.getElementById('successModal'));
-    successModal.hide();
-    showToast('Siap membuat transaksi baru', 'info');
 }
 
 function resetForm() {
@@ -1032,6 +885,5 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID').format(amount || 0);
 }
 
-}
 </script>
 @endsection

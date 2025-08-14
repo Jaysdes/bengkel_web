@@ -46,6 +46,9 @@ Route::middleware('auth.session')->group(function () {
     Route::get('/daftar-transaksi', function () {
         return view('daftar_transaksi');
     });
+    Route::get('/validasi', function () {
+        return view('validasi'); // validasi.blade.php di folder resources/views
+    })->name('validasi');
     // Rute SPK
     Route::get('/spk', function () {return view('spk');})->name('spk');
 

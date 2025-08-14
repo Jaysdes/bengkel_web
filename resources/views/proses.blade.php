@@ -3,6 +3,11 @@
 @section('content')
 <div class="container">
     <h4 class="mb-4">Manajemen Proses</h4>
+    <li class="nav-item">
+    <a class="nav-link" href="{{ route('validasi') }}">
+        <i class="bi bi-cash-coin"></i> Validasi Pembayaran
+    </a>
+</li>
 
     {{-- Search --}}
     <div class="mb-3">
