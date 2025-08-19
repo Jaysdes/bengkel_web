@@ -44,7 +44,7 @@
         @endif
 
         {{-- SPK --}}
-        @if(in_array($role, ['admin', 'mekanik']))
+        @if(in_array($role, ['admin']))
         <li class="nav-item mb-1">
             <a href="{{ route('spk') }}"
                class="nav-link d-flex align-items-center {{ $current == 'spk' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
@@ -54,7 +54,7 @@
         @endif
 
         {{-- Teknisi --}}
-        @if(in_array($role, ['admin', 'mekanik']))
+        @if(in_array($role, [  'admin','mekanik']))
         <li class="nav-item mb-1">
             <a href="{{ route('teknisi') }}"
                class="nav-link d-flex align-items-center {{ $current == 'teknisi' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
@@ -64,7 +64,7 @@
         @endif
 
         {{-- Proses Berjalan --}}
-        @if(in_array($role, ['admin', 'customer', 'mekanik']))
+        @if(in_array($role, ['admin', 'customer']))
         <li class="nav-item mb-1">
             <a href="{{ route('proses') }}"
                class="nav-link d-flex align-items-center {{ $current == 'proses' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
@@ -74,7 +74,7 @@
         @endif
 
         {{-- Laporan & Pembayaran --}}
-        @if(in_array($role, ['admin', 'customer', 'mekanik']))
+        @if(in_array($role, ['admin', 'customer', 'admin']))
         <li class="nav-item mb-1">
             <a href="{{ route('laporan') }}"
                class="nav-link d-flex align-items-center {{ $current == 'laporan' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
@@ -94,7 +94,7 @@
         @endif
 
         {{-- Transaksi --}}
-        @if(in_array($role, ['admin', 'keuangan']))
+        @if(in_array($role, [ 'admin','keuangan']))
         <li class="nav-item mb-1">
             <a href="{{ route('transaksi') }}"
                class="nav-link d-flex align-items-center {{ $current == 'transaksi' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-secondary rounded' }}">
@@ -123,12 +123,14 @@
                         <i class="bi bi-person-badge me-2"></i> Manajemen Users
                     </a>
                 </li>
+              
                 <li class="nav-item mb-1">
                     <a href="{{ route('mekanik') }}"
                        class="nav-link d-flex align-items-center {{ $current == 'mekanik' ? 'bg-primary text-dark fw-bold rounded' : 'text-white hover:bg-dark rounded' }}">
                         <i class="bi bi-tools me-2"></i> Manajemen Mekanik
                     </a>
                 </li>
+
                 @endif
             </ul>
         </div>

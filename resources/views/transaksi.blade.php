@@ -2,32 +2,30 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Page Header -->
+    <!-- Header -->
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div>
             <h1 class="page-title">
                 <i class="fas fa-cash-register mr-3"></i>
                 Transaksi Bengkel
-            </h1> <div class="flex items-center space-y-3 mt-3 lg:mt-6s">
-            <a href="{{ url('/daftar-transaksi') }}" class="btn-neon">
-                <i class="fas fa-list"></i>
-                Lihat Daftar Transaksi
-            </a>
+            </h1>
+            <div class="flex items-center space-y-3 mt-3 lg:mt-6s">
+                <a href="{{ url('/daftar-transaksi') }}" class="btn-neon">
+                    <i class="fas fa-list"></i>
+                    Lihat Daftar Transaksi
+                </a>
+            </div>
+            <p class="text-gray-400 text-lg">Kelola transaksi service kendaraan dengan mudah dan efisien</p>
         </div>
-            <p class="text-gray-400 text-lg">
-                Kelola transaksi service kendaraan dengan mudah dan efisien
-            </p>
-        </div>
-       
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 ">
-        <!-- Main Form Column -->
+        <!-- Form -->
         <div class="xl:col-span-2 space-y-6">
             <form id="dataForm" class="needs-validation" novalidate>
                 @csrf
-                
-                <!-- SPK Selection Card -->
+
+                <!-- SPK -->
                 <div class="form-neon bg-dark">
                     <div class="flex items-center mb-6">
                         <div class="stat-icon w-12 h-12 mr-4">
@@ -38,7 +36,7 @@
                             <p class="text-gray-400">Surat Perintah Kerja sebagai dasar transaksi</p>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-3">
                             <label class="block text-sm font-medium text-gray-300 mb-2">
@@ -50,7 +48,7 @@
                             <div class="invalid-feedback text-red-400 text-sm mt-1">Silakan pilih SPK</div>
                         </div>
                         <div class="flex items-end">
-                            <button type="button" class="btn-neon w-full" onclick="refreshSPK()">
+                            <button type="button" class="btn-neon w-full" id="btnRefreshSPK">
                                 <i class="fas fa-sync-alt"></i>
                                 Refresh
                             </button>
@@ -58,7 +56,7 @@
                     </div>
                 </div>
 
-                <!-- Customer & Vehicle Info Card -->
+                <!-- Customer & Kendaraan -->
                 <div class="form-neon bg-dark" id="customerInfo" style="display: none;">
                     <div class="flex items-center mb-6">
                         <div class="stat-icon w-12 h-12 mr-4">
@@ -69,7 +67,7 @@
                             <p class="text-gray-400">Data customer dan kendaraan dari SPK</p>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Customer</label>
@@ -94,7 +92,7 @@
                     </div>
                 </div>
 
-                <!-- Mechanic Selection Card -->
+                <!-- Mekanik -->
                 <div class="form-neon bg-dark" id="mechanicInfo" style="display: none;">
                     <div class="flex items-center mb-6">
                         <div class="stat-icon w-12 h-12 mr-4">
@@ -105,7 +103,7 @@
                             <p class="text-gray-400">Teknisi yang akan menangani service</p>
                         </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">
@@ -126,7 +124,7 @@
                     </div>
                 </div>
 
-                <!-- Service Information Card -->
+                <!-- Jasa & Jenis Service -->
                 <div class="form-neon bg-dark" id="serviceInfo" style="display: none;">
                     <div class="flex items-center mb-6">
                         <div class="stat-icon w-12 h-12 mr-4">
@@ -137,7 +135,7 @@
                             <p class="text-gray-400">Detail layanan yang diberikan</p>
                         </div>
                     </div>
-                    
+
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -154,42 +152,26 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Radio kecil & bisa di-klik -->
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-3">Jenis Service</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="form-neon bg-cyan-500/10 neon-border">
-                                    <label class="flex items-center p-3 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="berkala" value="1" class="sr-only" enable>
-                                        <div class="w-4 h-4 border-2 border-cyan-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full opacity-0 neon-glow" id="berkala-dot"></div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="text-sm font-medium text-white">Service Berkala</div>
-                                            <div class="text-xs text-gray-400">Maintenance rutin terjadwal</div>
-                                        </div>
-                                        <i class="fas fa-calendar-check text-cyan-400 text-sm"></i>
-                                    </label>
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" style="transform:scale(0.9)" type="radio" name="jenis_service" id="jenis_service_berkala" value="1" required>
+                                    <label class="form-check-label text-white text-sm" for="jenis_service_berkala">Berkala</label>
                                 </div>
-                                <div class="form-neon bg-orange-500/10 border border-orange-500/30">
-                                    <label class="flex items-center p-3 cursor-pointer">
-                                        <input type="radio" name="jenis_service" id="tidak_berkala" value="2" class="sr-only" enable>
-                                        <div class="w-4 h-4 border-2 border-orange-400 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-1.5 h-1.5 bg-orange-400 rounded-full opacity-0" id="tidak_berkala-dot"></div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="text-sm font-medium text-white">Service Tidak Berkala</div>
-                                            <div class="text-xs text-gray-400">Perbaikan khusus/darurat</div>
-                                        </div>
-                                        <i class="fas fa-wrench text-orange-400 text-sm"></i>
-                                    </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" style="transform:scale(0.9)" type="radio" name="jenis_service" id="jenis_service_tidak" value="2" required>
+                                    <label class="form-check-label text-white text-sm" for="jenis_service_tidak">Tidak Berkala</label>
                                 </div>
                             </div>
+                            <small class="text-gray-400">Radio dibuat kecil dan bisa di-klik.</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sparepart Management Card -->
+                <!-- Sparepart -->
                 <div class="form-neon bg-dark" id="sparepartSection" style="display: none;">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center">
@@ -201,13 +183,12 @@
                                 <p class="text-gray-400">Tambahkan spare part yang digunakan</p>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger text-gray-400 border-gray-600 hover:bg-gray-700" onclick="clearSpareparts()">
+                        <button type="button" class="btn btn-sm btn-outline-danger text-gray-400 border-gray-600 hover:bg-gray-700" id="btnClearSpare">
                             <i class="fas fa-trash"></i>
                             Clear All
                         </button>
                     </div>
-                    
-                    <!-- Add Sparepart Form -->
+
                     <div class="bg-gray-800/50 p-4 rounded-lg mb-6 border border-gray-700">
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div class="md:col-span-2">
@@ -221,7 +202,7 @@
                                 <input type="number" id="qty_sparepart" class="input-neon w-full" min="1" value="1">
                             </div>
                             <div class="md:col-span-2 flex items-end space-x-2">
-                                <button type="button" class="btn-neon-solid flex-1" onclick="addSparepart()">
+                                <button type="button" class="btn-neon-solid flex-1" id="btnAddSpare">
                                     <i class="fas fa-plus"></i>
                                     Tambah
                                 </button>
@@ -233,7 +214,6 @@
                         </div>
                     </div>
 
-                    <!-- Sparepart List Table -->
                     <div class="table-neon bg-dark">
                         <table class="table w-full bg-dark text-dark">
                             <thead>
@@ -259,25 +239,24 @@
                     </div>
                 </div>
 
-                <!-- Submit Actions -->
+                <!-- Submit -->
                 <div class="form-neon bg-dark" id="submitSection" style="display: none;">
-    <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
-        <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
-            <i class="fas fa-save mr-2"></i>
-            Simpan Transaksi
-        </button>
-        <button type="button" class="btn-neon text-lg px-8 py-4" onclick="resetForm()">
-            <i class="fas fa-undo mr-2"></i>
-            Reset Form
-        </button>
-    </div>
-</div>
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button type="submit" class="btn-neon-solid text-lg px-8 py-4" id="submitBtn">
+                            <i class="fas fa-save mr-2"></i>
+                            Simpan Transaksi
+                        </button>
+                        <button type="button" class="btn-neon text-lg px-8 py-4" id="btnReset">
+                            <i class="fas fa-undo mr-2"></i>
+                            Reset Form
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
 
-        <!-- Summary Sidebar -->
+        <!-- Sidebar Ringkasan -->
         <div class="space-y-6">
-            <!-- Transaction Summary -->
             <div class="form-neon top-24 bg-dark" id="summaryCard" style="display: none;">
                 <div class="flex items-center mb-4">
                     <div class="stat-icon w-10 h-10 mr-3">
@@ -285,7 +264,7 @@
                     </div>
                     <h3 class="text-lg font-semibold text-white">Ringkasan Transaksi</h3>
                 </div>
-                
+
                 <div class="space-y-4">
                     <div class="flex justify-between items-center pb-2 border-b border-gray-800">
                         <span class="text-gray-400">Biaya Jasa:</span>
@@ -300,26 +279,26 @@
                         <span class="text-2xl font-bold text-white" id="summary-total">Rp 0</span>
                     </div>
                 </div>
-                
+
                 <div class="mt-6 p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
                     <div class="flex items-start space-x-2">
                         <i class="fas fa-info-circle text-cyan-400 mt-1"></i>
                         <div class="text-sm text-cyan-200">
-                            <strong>Info:</strong> Total akan otomatis terupdate saat Anda menambahkan sparepart atau mengubah service.
+                            <strong>Info:</strong> Total terupdate otomatis saat mengubah jasa/sparepart.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Progress Indicator -->
-            <div class="form-neon bg-dark" >
+            <!-- Progress -->
+            <div class="form-neon bg-dark">
                 <div class="flex items-center mb-4">
                     <div class="stat-icon w-10 h-10 mr-3">
                         <i class="fas fa-tasks"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-white">Progress</h3>
                 </div>
-                
+
                 <div class="space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-400">Progress Pengisian</span>
@@ -334,15 +313,15 @@
                 </div>
             </div>
 
-            <!-- Help Section -->
+            <!-- Help -->
             <div class="form-neon bg-dark">
                 <div class="flex items-center mb-4">
                     <div class="stat-icon w-10 h-10 mr-3">
-                        <i class="fas fa-question-circle"></i>
+                        <i class="fas a-question-circle"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-white">Bantuan</h3>
                 </div>
-                
+
                 <div class="space-y-3 text-sm text-gray-400">
                     <div class="flex items-start space-x-2">
                         <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">1</span>
@@ -354,18 +333,17 @@
                     </div>
                     <div class="flex items-start space-x-2">
                         <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">3</span>
-                        <span>Tambahkan sparepart jika diperlukan</span>
+                        <span>Pilih jenis service (radio) dan atur sparepart jika perlu</span>
                     </div>
                     <div class="flex items-start space-x-2">
                         <span class="flex-shrink-0 w-6 h-6 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-xs font-bold border border-cyan-500/30">4</span>
-                        <span>Review ringkasan dan simpan transaksi</span>
+                        <span>Review ringkasan dan Simpan</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1">
@@ -380,7 +358,7 @@
                 <h4 class="text-green-400 mb-3 font-semibold">Transaksi Berhasil!</h4>
                 <p class="text-gray-400 mb-6">Transaksi telah berhasil disimpan ke sistem</p>
                 <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
-                    <button type="button" class="btn-neon" onclick="createNewTransaction()">
+                    <button type="button" class="btn-neon" id="btnNewTrx">
                         <i class="fas fa-plus mr-2"></i>
                         Transaksi Baru
                     </button>
@@ -393,226 +371,229 @@
         </div>
     </div>
 </div>
-
 @endsection
-
 @section('scripts')
 <script>
+// Gunakan token bila API Anda protected
+const token = "{{ session('token') }}";
 const API_URL = '{{ env('API_URL', 'http://localhost:8001/api') }}';
+
 let sparepartListData = [];
 let formProgress = 0;
 let lastTransactionId = null;
+let currentSPK = null;
 
-// Initialize when page loads
+function updateProgress(n) {
+    formProgress = n;
+    document.getElementById('progressBar').style.width = n + '%';
+    document.getElementById('progressPercentage').textContent = n + '%';
+}
+function updateProgressText(text) {
+    document.getElementById('progressText').textContent = text;
+}
+
+// INIT
 document.addEventListener("DOMContentLoaded", function () {
+    bindEvents();
     initializeForm();
-    setupEventListeners();
 });
 
+function bindEvents() {
+    document.getElementById('id_spk').addEventListener('change', autofillFromSPK);
+    document.getElementById('id_jasa').addEventListener('change', onChangeJasa);
+    document.getElementById('id_mekanik').addEventListener('change', fetchMekanikPhone);
+    document.getElementById('dataForm').addEventListener('submit', handleSubmit);
+
+    document.getElementById('id_sparepart').addEventListener('change', updateSparepartHint);
+    document.getElementById('btnAddSpare')?.addEventListener('click', addSparepart);
+    document.getElementById('btnClearSpare')?.addEventListener('click', clearSpareparts);
+    document.getElementById('btnRefreshSPK')?.addEventListener('click', () => {
+        updateProgressText('Memuat ulang SPK...');
+        loadSPKDropdown().then(() => updateProgressText('SPK dimuat'));
+    });
+    document.getElementById('btnNewTrx')?.addEventListener('click', () => {
+        resetForm();
+        const m = bootstrap.Modal.getInstance(document.getElementById('successModal'));
+        m && m.hide();
+    });
+
+    // Radio = jenis_service
+    document.querySelectorAll('input[name="jenis_service"]').forEach(r => {
+        r.addEventListener('change', () => {
+            updateProgress(Math.max(formProgress, 75));
+            updateProgressText('Jenis service dipilih');
+        });
+    });
+
+    document.getElementById('btnReset')?.addEventListener('click', resetForm);
+}
+
 function initializeForm() {
-    showToast('Memuat data formulir...', 'info');
-    
     Promise.all([
         loadDropdown('customers', 'id_customer'),
         loadDropdown('mekanik', 'id_mekanik'),
         loadDropdown('jenis_jasa', 'id_jasa'),
         loadDropdown('sparepart', 'id_sparepart', true),
-        loadSPKDropdown()
+        loadSPKDropdown() // penting: option SPK menyertakan data-id-service & data-id-jenis
     ]).then(() => {
-        showToast('Formulir siap digunakan', 'success');
         updateProgress(20);
-    }).catch(error => {
-        showToast('Gagal memuat data formulir', 'error');
-        console.error('Error:', error);
-    });
+        updateProgressText('Pilih SPK untuk memulai');
+    }).catch(err => console.error('Init error:', err));
 }
 
-function setupEventListeners() {
-    document.getElementById('id_spk').addEventListener('change', autofillFromSPK);
-    document.getElementById('id_jasa').addEventListener('change', calculateTotal);
-    document.getElementById('id_mekanik').addEventListener('change', fetchMekanikPhone);
-    document.getElementById('dataForm').addEventListener('submit', handleSubmit);
-    document.getElementById('id_sparepart').addEventListener('change', updateSparepartHint);
-    
-    // Radio button listeners
-    document.getElementById('berkala').addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('berkala-dot').style.opacity = '1';
-            document.getElementById('tidak_berkala-dot').style.opacity = '0';
+async function loadDropdown(endpoint, elementId) {
+    const res = await fetch(`${API_URL}/${endpoint}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+    if (!res.ok) throw new Error(`GET ${endpoint} ${res.status}`);
+    const result = await res.json();
+    const data = result.data || result || [];
+    const select = document.getElementById(elementId);
+    select.innerHTML = '<option value="">-- Pilih --</option>';
+
+    data.forEach(item => {
+        if (endpoint === 'customers') {
+            select.innerHTML += `<option value="${item.id_customer}">${item.nama_customer}</option>`;
+        } else if (endpoint === 'mekanik') {
+            select.innerHTML += `<option value="${item.id_mekanik}">${item.nama_mekanik}</option>`;
+        } else if (endpoint === 'jenis_jasa') {
+            select.innerHTML += `<option value="${item.id_jasa}" data-harga="${item.harga_jasa}">${item.nama_jasa} - Rp ${formatCurrency(item.harga_jasa)}</option>`;
+        } else if (endpoint === 'sparepart') {
+            select.innerHTML += `<option value="${item.id_sparepart}" data-harga="${item.harga_jual}" data-stok="${item.stok}">${item.nama_sparepart} - Rp ${formatCurrency(item.harga_jual)} (Stok: ${item.stok})</option>`;
         }
     });
-    
-    document.getElementById('tidak_berkala').addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('tidak_berkala-dot').style.opacity = '1';
-            document.getElementById('berkala-dot').style.opacity = '0';
-        }
+}
+
+async function loadSPKDropdown() {
+    const res = await fetch(`${API_URL}/spk`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+    if (!res.ok) throw new Error(`GET spk ${res.status}`);
+    const result = await res.json();
+    const data = result.data || result || [];
+    const select = document.getElementById('id_spk');
+    select.innerHTML = '<option value="">-- Pilih SPK --</option>';
+    data.forEach(spk => {
+        // Tambahkan id_service & id_jenis ke option (UNTUK FIX 400: id_jenis dijamin tersedia)
+        select.innerHTML += `<option value="${spk.id_spk}" data-id-service="${spk.id_service}" data-id-jenis="${spk.id_jenis}">
+            SPK #${String(spk.id_spk).padStart(4, '0')} - ${spk.keluhan || 'No Description'}
+        </option>`;
     });
 }
 
-function loadDropdown(endpoint, elementId, includeHarga = false) {
-    return fetch(`${API_URL}/${endpoint}`)
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        })
-        .then(result => {
-            const data = result.data || result;
-            const select = document.getElementById(elementId);
-            select.innerHTML = '<option value="">-- Pilih --</option>';
-            
-            data.forEach(item => {
-                let option = '';
-                if (endpoint === 'customers') {
-                    option = `<option value="${item.id_customer}">${item.nama_customer} - ${item.telepon || 'N/A'}</option>`;
-                } else if (endpoint === 'mekanik') {
-                    option = `<option value="${item.id_mekanik}">${item.nama_mekanik}</option>`;
-                } else if (endpoint === 'jenis_jasa') {
-                    option = `<option value="${item.id_jasa}" data-harga="${item.harga_jasa}">${item.nama_jasa} - Rp ${formatCurrency(item.harga_jasa)}</option>`;
-                } else if (endpoint === 'sparepart') {
-                    option = `<option value="${item.id_sparepart}" data-harga="${item.harga_jual}" data-stok="${item.stok}">${item.nama_sparepart} - Rp ${formatCurrency(item.harga_jual)} (Stok: ${item.stok})</option>`;
-                }
-                select.innerHTML += option;
-            });
-        })
-        .catch(error => {
-            console.error(`Error loading ${endpoint}:`, error);
-            showToast(`Gagal memuat data ${endpoint}`, 'error');
-        });
+function onChangeJasa() {
+    const jasaSelect = document.getElementById('id_jasa');
+    const harga = parseInt(jasaSelect.selectedOptions[0]?.getAttribute('data-harga')) || 0;
+    document.getElementById('harga_jasa').value = formatCurrency(harga);
+    calculateTotal();
 }
 
-function loadSPKDropdown() {
-    return fetch(`${API_URL}/spk`)
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        })
-        .then(result => {
-            const data = result.data || result;
-            const select = document.getElementById('id_spk');
-            select.innerHTML = '<option value="">-- Pilih SPK --</option>';
-            data.forEach(spk => {
-                select.innerHTML += `<option value="${spk.id_spk}">SPK #${String(spk.id_spk).padStart(4, '0')} - ${spk.keluhan || 'No Description'}</option>`;
-            });
-        })
-        .catch(error => {
-            console.error('Error loading SPK:', error);
-            showToast('Gagal memuat data SPK', 'error');
-        });
-}
-
-function autofillFromSPK() {
-    const id = document.getElementById('id_spk').value;
+async function autofillFromSPK() {
+    const select = document.getElementById('id_spk');
+    const id = select.value;
     if (!id) {
         hideAllSections();
+        updateProgress(20);
+        updateProgressText('Pilih SPK untuk memulai');
         return;
     }
 
-    showToast('Memuat data SPK...', 'info');
     updateProgress(40);
+    updateProgressText('Memuat data SPK...');
 
-    fetch(`${API_URL}/spk/${id}`)
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        })
-        .then(result => {
-            const spk = result.data || result;
-            document.getElementById('id_customer').value = spk.id_customer;
-            document.getElementById('id_jasa').value = spk.id_jasa;
-            document.getElementById('no_kendaraan').value = spk.no_kendaraan;
+    // Ambil attribute dari option untuk id_service & id_jenis (FIX 400: gunakan untuk payload)
+    const opt = select.selectedOptions[0];
+    const optService = parseInt(opt?.getAttribute('data-id-service')) || null;
 
-            // Show sections with animation - SPK input should work regardless of spare parts availability
-            showSection('customerInfo');
-            showSection('mechanicInfo');
-            showSection('serviceInfo');
-            showSection('sparepartSection'); // Always show sparepart section, even if no parts available
-            showSection('submitSection');
-            showSection('summaryCard');
+    // Ambil detail SPK (untuk id_customer, id_jasa, no_kendaraan, dan fallback id_jenis)
+    const res = await fetch(`${API_URL}/spk/${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+    if (!res.ok) {
+        alert('Gagal memuat SPK');
+        return;
+    }
+    const result = await res.json();
+    const spk = result.data || result;
+    currentSPK = spk;
 
-            // Load customer phone
-            return fetch(`${API_URL}/customers/${spk.id_customer}`);
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        })
-        .then(customer => {
-            document.getElementById('telp_customer').value = customer.data.telepon;
+    // Isi field
+    document.getElementById('id_customer').value = spk.id_customer;
+    document.getElementById('id_jasa').value = spk.id_jasa;
+    document.getElementById('no_kendaraan').value = spk.no_kendaraan;
 
-            // Load service price
-            const jasaSelect = document.getElementById('id_jasa');
-            const harga = parseInt(jasaSelect.selectedOptions[0]?.getAttribute('data-harga')) || 0;
-            document.getElementById('harga_jasa').value = formatCurrency(harga);
-            
-            // Enable service type radio buttons
-            document.getElementById('berkala').disabled = false;
-            document.getElementById('tidak_berkala').disabled = false;
-            document.getElementById('id_jasa').disabled = false;
-            
-            calculateTotal();
-            updateProgress(60);
-            showToast('Data SPK berhasil dimuat - Silakan lanjutkan dengan atau tanpa sparepart', 'success');
-        })
-        .catch(error => {
-            showToast('Gagal memuat data SPK', 'error');
-            console.error('Error:', error);
+    // Set radio jenis_service sesuai id_service dari SPK
+    const svc = optService || spk.id_service || null;
+    if (svc) {
+        const radio = document.querySelector(`input[name="jenis_service"][value="${svc}"]`);
+        if (radio) radio.checked = true;
+    }
+
+    // Tampilkan section
+    ['customerInfo','mechanicInfo','serviceInfo','sparepartSection','submitSection','summaryCard'].forEach(showSection);
+
+    // Telepon customer
+    try {
+        const resCust = await fetch(`${API_URL}/customers/${spk.id_customer}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
+        if (resCust.ok) {
+            const customer = await resCust.json();
+            const c = customer.data || customer;
+            document.getElementById('telp_customer').value = c.telepon || '';
+        }
+    } catch (e) {}
+
+    // Harga jasa dari option
+    onChangeJasa();
+
+    updateProgress(60);
+    updateProgressText('SPK dimuat. Pilih mekanik & cek ringkasan.');
 }
 
-function showSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    section.style.display = 'block';
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    
+function showSection(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'block';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
     setTimeout(() => {
-        section.style.transition = 'all 0.5s ease';
-        section.style.opacity = '1';
-        section.style.transform = 'translateY(0)';
-    }, 100);
+        el.style.transition = 'all 0.4s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+    }, 50);
 }
-
 function hideAllSections() {
-    const sections = ['customerInfo', 'mechanicInfo', 'serviceInfo', 'sparepartSection', 'submitSection', 'summaryCard'];
-    sections.forEach(id => {
+    ['customerInfo','mechanicInfo','serviceInfo','sparepartSection','submitSection','summaryCard'].forEach(id => {
         document.getElementById(id).style.display = 'none';
     });
-    updateProgress(20);
-    updateProgressText('Pilih SPK untuk memulai');
 }
 
-function fetchMekanikPhone() {
+async function fetchMekanikPhone() {
     const id = document.getElementById('id_mekanik').value;
     if (!id) return;
 
-    updateProgress(80);
-    
-    fetch(`${API_URL}/mekanik/${id}`)
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-        })
-        .then(result => {
-            document.getElementById('telp_mekanik').value = result.data.telepon;
-            updateProgress(90);
-            updateProgressText('Siap untuk submit transaksi');
-        })
-        .catch(error => {
-            console.error('Error loading mekanik phone:', error);
-        });
+    const res = await fetch(`${API_URL}/mekanik/${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+    if (res.ok) {
+        const result = await res.json();
+        const d = result.data || result;
+        document.getElementById('telp_mekanik').value = d.telepon || '';
+        updateProgress(90);
+        updateProgressText('Siap untuk menyimpan transaksi');
+    }
 }
 
 function updateSparepartHint() {
     const select = document.getElementById('id_sparepart');
-    const selectedOption = select.options[select.selectedIndex];
+    const opt = select.options[select.selectedIndex];
     const hintDiv = document.getElementById('sparepartHint');
     const hintText = document.getElementById('sparepartHintText');
-    
-    if (selectedOption && selectedOption.value) {
-        const stok = selectedOption.getAttribute('data-stok');
-        const harga = selectedOption.getAttribute('data-harga');
-        hintText.textContent = `Stok tersedia: ${stok} unit, Harga: Rp ${formatCurrency(harga)}`;
+
+    if (opt && opt.value) {
+        const stok = opt.getAttribute('data-stok');
+        const harga = opt.getAttribute('data-harga');
+        hintText.textContent = `Stok tersedia: ${stok} • Harga: Rp ${formatCurrency(harga)}`;
         hintDiv.classList.remove('hidden');
     } else {
         hintDiv.classList.add('hidden');
@@ -623,62 +604,36 @@ function addSparepart() {
     const select = document.getElementById('id_sparepart');
     const qty = parseInt(document.getElementById('qty_sparepart').value) || 1;
     const id = select.value;
+    if (!id) return alert('Silakan pilih sparepart');
+
     const nama = select.options[select.selectedIndex].text.split(' - ')[0];
     const harga = parseInt(select.options[select.selectedIndex].getAttribute('data-harga')) || 0;
     const stok = parseInt(select.options[select.selectedIndex].getAttribute('data-stok')) || 0;
+    if (qty > stok) return alert(`Qty melebihi stok (${stok})`);
 
-    if (!id) {
-        showToast('Silakan pilih sparepart terlebih dahulu', 'warning');
-        return;
-    }
-
-    if (qty > stok) {
-        showToast(`Qty melebihi stok yang tersedia (${stok})`, 'error');
-        return;
-    }
-
-    // Check if sparepart already exists
-    const existingIndex = sparepartListData.findIndex(item => item.id_sparepart === parseInt(id));
-    if (existingIndex !== -1) {
-        const newQty = sparepartListData[existingIndex].qty + qty;
-        if (newQty > stok) {
-            showToast(`Total qty akan melebihi stok yang tersedia (${stok})`, 'error');
-            return;
-        }
-        sparepartListData[existingIndex].qty = newQty;
-        sparepartListData[existingIndex].subtotal = newQty * harga;
+    const idx = sparepartListData.findIndex(x => x.id_sparepart === parseInt(id));
+    if (idx !== -1) {
+        const newQty = sparepartListData[idx].qty + qty;
+        if (newQty > stok) return alert(`Total qty melebihi stok (${stok})`);
+        sparepartListData[idx].qty = newQty;
+        sparepartListData[idx].subtotal = newQty * harga;
     } else {
-        const subtotal = qty * harga;
-        sparepartListData.push({ 
-            id_sparepart: parseInt(id), 
-            nama,
-            qty, 
-            harga, 
-            subtotal 
-        });
+        sparepartListData.push({ id_sparepart: parseInt(id), nama, qty, harga, subtotal: qty * harga });
     }
-
     renderSparepartTable();
     calculateTotal();
-    
-    // Reset form
+
+    // reset choose
     document.getElementById('id_sparepart').selectedIndex = 0;
     document.getElementById('qty_sparepart').value = 1;
     document.getElementById('sparepartHint').classList.add('hidden');
-    
-    showToast('Sparepart berhasil ditambahkan', 'success');
 }
 
 function renderSparepartTable() {
     const tbody = document.getElementById('sparepartList');
-    const noDataRow = document.getElementById('noSparepartRow');
-
-    // Clear all rows first
     tbody.innerHTML = '';
-
     if (sparepartListData.length === 0) {
-        // Show no data row
-        const noDataRowHtml = `
+        tbody.innerHTML = `
             <tr id="noSparepartRow">
                 <td colspan="5" class="px-6 py-8 text-center text-gray-500">
                     <div class="flex flex-col items-center space-y-2">
@@ -686,13 +641,9 @@ function renderSparepartTable() {
                         <span>Belum ada sparepart yang ditambahkan</span>
                     </div>
                 </td>
-            </tr>
-        `;
-        tbody.innerHTML = noDataRowHtml;
+            </tr>`;
         return;
     }
-
-    // Render all sparepart items
     sparepartListData.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-800/50 transition-colors';
@@ -714,176 +665,133 @@ function renderSparepartTable() {
                 <button class="inline-flex items-center px-3 py-1 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30" onclick="removeSparepartByIndex(${index})" title="Hapus item">
                     <i class="fas fa-trash text-sm"></i>
                 </button>
-            </td>
-        `;
+            </td>`;
         tbody.appendChild(tr);
     });
 }
 
 function removeSparepartByIndex(index) {
     if (index >= 0 && index < sparepartListData.length) {
-        // Remove item from array
-        const removedItem = sparepartListData.splice(index, 1)[0];
-        
-        // Re-render the table completely
+        sparepartListData.splice(index, 1);
         renderSparepartTable();
-        
-        // Recalculate total
         calculateTotal();
-        
-        showToast(`${removedItem.nama} berhasil dihapus`, 'info');
-    } else {
-        showToast('Gagal menghapus item - index tidak valid', 'error');
     }
 }
 
 function clearSpareparts() {
     if (sparepartListData.length === 0) return;
-    
-    if (confirm('Apakah Anda yakin ingin menghapus semua sparepart?')) {
+    if (confirm('Hapus semua sparepart?')) {
         sparepartListData = [];
         renderSparepartTable();
         calculateTotal();
-        showToast('Semua sparepart dihapus', 'info');
     }
 }
 
 function calculateTotal() {
-    const hargaJasaText = document.getElementById('harga_jasa').value.replace(/[^\d]/g, '');
-    const hargaJasa = parseInt(hargaJasaText) || 0;
-    
-    let totalSparepart = 0;
-    sparepartListData.forEach(item => {
-        totalSparepart += item.subtotal;
-    });
-
-    const grandTotal = hargaJasa + totalSparepart;
-
-    // Update summary
+    const hargaJasa = parseInt((document.getElementById('harga_jasa').value || '').replace(/[^\d]/g, '')) || 0;
+    const totalSparepart = sparepartListData.reduce((sum, it) => sum + it.subtotal, 0);
     document.getElementById('summary-jasa').textContent = `Rp ${formatCurrency(hargaJasa)}`;
     document.getElementById('summary-sparepart').textContent = `Rp ${formatCurrency(totalSparepart)}`;
-    document.getElementById('summary-total').textContent = `Rp ${formatCurrency(grandTotal)}`;
+    document.getElementById('summary-total').textContent = `Rp ${formatCurrency(hargaJasa + totalSparepart)}`;
 }
 
-function updateProgress(percentage) {
-    formProgress = percentage;
-    const progressBar = document.getElementById('progressBar');
-    const progressPercentage = document.getElementById('progressPercentage');
-    
-    progressBar.style.width = percentage + '%';
-    progressPercentage.textContent = percentage + '%';
-}
-
-function updateProgressText(text) {
-    document.getElementById('progressText').textContent = text;
-}
-function handleSubmit(e) {
+// SUBMIT: POST /transaksi — FIX 400: pastikan id_jenis terisi valid (1/2), sertakan Authorization bila perlu
+async function handleSubmit(e) {
     e.preventDefault();
 
-    const form = e.target;
-    const requiredFields = ['id_spk', 'id_mekanik'];
-    const missingFields = [];
+    const spkSelect = document.getElementById('id_spk');
+    const id_spk = parseInt(spkSelect.value || 0);
+    const id_mekanik = parseInt(document.getElementById('id_mekanik').value || 0);
+    const radio = document.querySelector('input[name="jenis_service"]:checked');
+    const jenis_service = radio ? parseInt(radio.value) : 0;
 
-    // Validasi input wajib
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field);
-        if (!element || !element.value.trim()) {
-            missingFields.push(field);
-            element?.classList.add('is-invalid');
-        } else {
-            element?.classList.remove('is-invalid');
-        }
-    });
-
-    // Validasi jenis service
-    const jenisServiceChecked = document.querySelector('input[name="jenis_service"]:checked');
-    if (!jenisServiceChecked) {
-        missingFields.push('jenis_service');
-        showToast('Silakan pilih jenis service (Berkala atau Tidak Berkala)', 'warning');
-    }
-
-    if (missingFields.length > 0) {
-        showToast('Mohon lengkapi field: SPK, Mekanik, dan Jenis Service', 'error');
-        updateProgress(70);
+    if (!id_spk || !id_mekanik || !jenis_service) {
+        alert('SPK, Mekanik, dan Jenis Service wajib diisi.');
         return;
     }
 
-    // Hitung harga
-    const hargaJasaText = document.getElementById('harga_jasa').value.replace(/[^\d]/g, '');
-    const hargaJasa = parseInt(hargaJasaText) || 0;
-    const hargaSparepart = sparepartListData.reduce((total, item) => total + item.subtotal, 0);
+    // id_customer diambil dari currentSPK (select customer disabled)
+    const id_customer = parseInt(currentSPK?.id_customer || 0);
+    if (!id_customer) {
+        alert('Gagal menyimpan: data customer dari SPK tidak ditemukan.');
+        return;
+    }
 
-    // Data sesuai struct di Golang
-    const data = {
-        id_spk: parseInt(document.getElementById('id_spk').value),
-        id_customer: parseInt(document.getElementById('id_customer').value),
-        id_jenis: parseInt(document.getElementById('id_jasa').value),
-        no_kendaraan: document.getElementById('no_kendaraan').value,
-        telepon: document.getElementById('telepon').value,
-        id_mekanik: parseInt(document.getElementById('id_mekanik').value),
-        harga_jasa: hargaJasa,
-        harga_sparepart: hargaSparepart,
-        jenis_service: jenisServiceChecked.value
-        // total tidak perlu dikirim, backend hitung otomatis
+    // id_jenis dari option SPK (fallback dari currentSPK). Jika tidak ada, JANGAN kirim id_jenis agar backend set NULL.
+    const opt = spkSelect.selectedOptions[0];
+    const attrJenis = parseInt(opt?.getAttribute('data-id-jenis') || 0);
+    const id_jenis = attrJenis || parseInt(currentSPK?.id_jenis || 0);
+
+    const harga_jasa = parseInt((document.getElementById('harga_jasa').value || '').replace(/[^\d]/g, '')) || 0;
+    const harga_sparepart = (sparepartListData || []).reduce((t, i) => t + (i.subtotal || 0), 0);
+
+    const basePayload = {
+        id_spk,
+        id_customer,
+        no_kendaraan: document.getElementById('no_kendaraan').value || '',
+        telepon: document.getElementById('telp_customer').value || '',
+        id_mekanik,
+        harga_jasa,
+        harga_sparepart,
+        jenis_service
     };
+    // hanya kirim id_jenis jika valid (>0), menghindari 400 akibat tipe/tidak valid
+    if (id_jenis && id_jenis > 0) {
+        basePayload.id_jenis = id_jenis;
+    }
 
-    // Kirim ke API
-    fetch(`${API_URL}/transaksi`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-    })
-    .then(result => {
-        lastTransactionId = result.data.id_transaksi;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    const prev = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...';
+    updateProgress(95);
+    updateProgressText('Menyimpan transaksi...');
 
-        // Modal sukses
+    try {
+        const res = await fetch(`${API_URL}/transaksi`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify(basePayload)
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || `Gagal (HTTP ${res.status})`);
+
+        lastTransactionId = (result.data && result.data.id_transaksi) || result.id_transaksi;
+        updateProgress(100);
+        updateProgressText('Transaksi berhasil disimpan!');
+
         const successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
-
         document.getElementById('viewInvoiceBtn').onclick = function() {
             window.location.href = `/nota/${lastTransactionId}`;
         };
-
-        updateProgress(100);
-        updateProgressText('Transaksi berhasil disimpan!');
-        showToast('Transaksi berhasil disimpan!', 'success');
-    })
-    .catch(err => {
-        console.error('Error:', err);
-        showToast('Gagal menyimpan transaksi: ' + err.message, 'error');
-    });
+    } catch (err) {
+        console.error('POST /transaksi error:', err);
+        alert('Gagal menyimpan transaksi: ' + err.message);
+        updateProgress(80);
+        updateProgressText('Gagal menyimpan, periksa data');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = prev;
+    }
 }
 
 function resetForm() {
     document.getElementById('dataForm').reset();
-    document.getElementById('dataForm').classList.remove('was-validated');
     sparepartListData = [];
     renderSparepartTable();
     calculateTotal();
     hideAllSections();
     updateProgress(20);
     updateProgressText('Pilih SPK untuk memulai');
-    
-    // Reset radio button indicators
-    document.getElementById('berkala-dot').style.opacity = '0';
-    document.getElementById('tidak_berkala-dot').style.opacity = '0';
 }
 
-function refreshSPK() {
-    showToast('Memuat ulang data SPK...', 'info');
-    loadSPKDropdown().then(() => {
-        showToast('Data SPK berhasil dimuat ulang', 'success');
-    });
-}
-
-// Utility functions
 function formatCurrency(amount) {
     return new Intl.NumberFormat('id-ID').format(amount || 0);
 }
-
 </script>
+
 @endsection
