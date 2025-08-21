@@ -14,7 +14,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $baseUrl = 'http://localhost:8001/api';
+        $baseUrl = 'https://apibengkel.up.railway.app/api';
         
         // Get date filter parameters from query string
         $startDate = $request->query('start_date', date('Y-m-d', strtotime('-7 days')));

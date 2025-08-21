@@ -3,6 +3,7 @@
 @section('content')
 @php
     $role = session('user')['role'] ?? '';
+    $namaLogin = session('user')['name'] ?? '';
 @endphp
 
 <h4 class="mb-4 text-xl font-bold">Data Customer & Jenis Kendaraan</h4>
@@ -26,7 +27,15 @@
 
             <div class="mb-3">
                 <label for="nama_customer" class="form-label">Nama Customer</label>
-                <input type="text" name="nama_customer" id="nama_customer" class="form-control" required>
+                <input 
+                    type="text" 
+                    name="nama_customer" 
+                    id="nama_customer" 
+                    class="form-control" 
+                    value="{{ $role === 'customer' ? $namaLogin : '' }}" 
+                    {{ $role === 'customer' ? 'readonly' : '' }} 
+                    required
+                >
             </div>
 
             <div class="mb-3">
@@ -44,19 +53,43 @@
                 <input type="text" name="telepon" id="telepon" class="form-control" required>
             </div>
 
-            <!-- Field tanggal masuk dihapus, diisi otomatis oleh JS -->
-
-            <button type="submit" class="btn btn-success">Simpan</button>
-            <button type="reset" onclick="resetForm()" class="btn btn-secondary">Reset</button>
+            <button type="submit" class="btn-neon">Simpan</button>
+            <button type="reset" onclick="resetForm()" class="btn-neon btn-secondary">Reset</button>
         </form>
     </div>
 </div>
-@if($role !== 'customer')
-@include('layouts.tbatas')
 
+@if($role !== 'customer')
 <!-- Tabel Data Customer -->
 <div class="card p-3 mb-4">
-    <h5 class="mb-3">DAFTAR CUSTOMER</h5>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">DAFTAR CUSTOMER</h5>
+    </div><br>
+
+    {{-- Kontrol Tabel Atas --}}
+    <div class="d-flex justify-content-between mb-2 align-items-center flex-wrap">
+        <div class="mb-2">
+            <label>
+                Show
+                <select id="entriesPerPage" class="form-select d-inline-block w-auto">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                </select>
+                entries
+            </label>
+        </div>
+
+        <div class="mb-2">
+            <div class="input-group">
+                <span class="input-group-text te">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari Data...">
+            </div>
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -74,23 +107,34 @@
             <tbody id="customerTableBody"></tbody>
         </table>
     </div>
-    <div id="tableInfo" class="mt-2"></div>
-    <div id="pageNumbers" class="mt-2"></div>
-</div>
 
-@include('layouts.tbbawah')
+    {{-- Kontrol Tabel Bawah --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div id="tableInfo" class="mb-2"></div>
+        <div id="pageNumbers" class="mb-2"></div>
+    </div>
+</div>
 @endif
+
 <script>
     const token = "{{ session('token') }}";
-    const apiBase = 'http://localhost:8001/api';
-    const userRole = "{{ session('user')['role'] ?? '' }}";
+    const apiBase = 'https://apibengkel.up.railway.app/api';
+    const userRole = "{{ $role }}";
+    const userName = "{{ $namaLogin }}";
     let currentPage = 1;
     let totalEntries = 0;
     let totalPages = 0;
+    let perPage = 10; // default
+    let customers = []; // cache data
+    let searchQuery = "";
 
     function resetForm() {
         document.getElementById('dataForm').reset();
         document.getElementById('id_customer').value = '';
+        // jika role customer, nama tetap readonly & auto isi
+        if (userRole === 'customer') {
+            document.getElementById('nama_customer').value = userName;
+        }
     }
 
     function editCustomer(data) {
@@ -127,7 +171,6 @@
             no_kendaraan: form.no_kendaraan.value,
             alamat: form.alamat.value,
             telepon: form.telepon.value,
-            // otomatis tanggal sekarang jika tambah baru
             tanggal_masuk: id ? undefined : new Date().toISOString().split("T")[0]
         };
 
@@ -158,16 +201,31 @@
     });
 
     async function loadCustomers() {
-        const perPage = 10;
         const res = await fetch(`${apiBase}/customers`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
         const result = await res.json();
-        let data = result.data || [];
+        customers = (result.data || []);
 
-        // Urutkan terbaru di atas
-        data.sort((a, b) => new Date(b.tanggal_masuk) - new Date(a.tanggal_masuk));
+        // Urutkan terbaru berdasarkan ID (id besar paling atas)
+        customers.sort((a, b) => b.id_customer - a.id_customer);
+
+        renderTable();
+    }
+
+    function renderTable() {
+        let data = [...customers];
+
+        // Filter pencarian
+        if (searchQuery) {
+            data = data.filter(c =>
+                c.nama_customer.toLowerCase().includes(searchQuery) ||
+                c.no_kendaraan.toLowerCase().includes(searchQuery) ||
+                c.alamat.toLowerCase().includes(searchQuery) ||
+                c.telepon.toLowerCase().includes(searchQuery)
+            );
+        }
 
         totalEntries = data.length;
         totalPages = Math.ceil(totalEntries / perPage);
@@ -211,7 +269,8 @@
         });
 
         const endEntry = Math.min(startIdx + pageItems.length, totalEntries);
-        document.getElementById('tableInfo').textContent = `Menampilkan ${startIdx + 1} sampai ${endEntry} dari ${totalEntries} data`;
+        document.getElementById('tableInfo').textContent =
+            `Menampilkan ${startIdx + 1} sampai ${endEntry} dari ${totalEntries} data`;
 
         renderPagination();
     }
@@ -225,11 +284,25 @@
             btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
             btn.onclick = () => {
                 currentPage = i;
-                loadCustomers();
+                renderTable();
             };
             pageContainer.appendChild(btn);
         }
     }
+
+    // Listener dropdown entries
+    document.getElementById('entriesPerPage').addEventListener('change', function () {
+        perPage = parseInt(this.value);
+        currentPage = 1;
+        renderTable();
+    });
+
+    // Listener search
+    document.getElementById('searchInput').addEventListener('input', function () {
+        searchQuery = this.value.toLowerCase();
+        currentPage = 1;
+        renderTable();
+    });
 
     // Auto-refresh setiap 5 detik
     setInterval(loadCustomers, 5000);

@@ -12,7 +12,7 @@ class MekanikController extends Controller
         $client = new \GuzzleHttp\Client();
         $token = session('token');
     
-        $res = $client->request('GET', 'http://localhost:8001/api/mekanik', [
+        $res = $client->request('GET', 'https://apibengkel.up.railway.app/api/mekanik', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
             ]

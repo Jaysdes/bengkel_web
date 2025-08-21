@@ -166,10 +166,33 @@
                                     <label class="form-check-label text-white text-sm" for="jenis_service_tidak">Tidak Berkala</label>
                                 </div>
                             </div>
-                            <small class="text-gray-400">Radio dibuat kecil dan bisa di-klik.</small>
+                           
                         </div>
                     </div>
                 </div>
+<!-- Keluhan & Catatan -->
+<div class="form-neon bg-dark" id="keluhanCatatanSection" style="display: none;">
+    <div class="flex items-center mb-6">
+        <div class="stat-icon w-12 h-12 mr-4">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div>
+            <h3 class="text-xl font-semibold text-white">Keluhan & Catatan</h3>
+            <p class="text-gray-400">Informasi tambahan dari SPK</p>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Keluhan</label>
+            <textarea id="keluhan" class="input-neon w-full" rows="2" readonly></textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Catatan</label>
+            <textarea id="catatan" class="input-neon w-full" rows="2" readonly></textarea>
+        </div>
+    </div>
+</div>
 
                 <!-- Sparepart -->
                 <div class="form-neon bg-dark" id="sparepartSection" style="display: none;">
@@ -376,7 +399,7 @@
 <script>
 // Gunakan token bila API Anda protected
 const token = "{{ session('token') }}";
-const API_URL = '{{ env('API_URL', 'http://localhost:8001/api') }}';
+const API_URL = '{{ env('API_URL', 'https://apibengkel.up.railway.app/api') }}';
 
 let sparepartListData = [];
 let formProgress = 0;
@@ -474,7 +497,6 @@ async function loadSPKDropdown() {
     const select = document.getElementById('id_spk');
     select.innerHTML = '<option value="">-- Pilih SPK --</option>';
     data.forEach(spk => {
-        // Tambahkan id_service & id_jenis ke option (UNTUK FIX 400: id_jenis dijamin tersedia)
         select.innerHTML += `<option value="${spk.id_spk}" data-id-service="${spk.id_service}" data-id-jenis="${spk.id_jenis}">
             SPK #${String(spk.id_spk).padStart(4, '0')} - ${spk.keluhan || 'No Description'}
         </option>`;
@@ -501,7 +523,6 @@ async function autofillFromSPK() {
     updateProgress(40);
     updateProgressText('Memuat data SPK...');
 
-    // Ambil attribute dari option untuk id_service & id_jenis (FIX 400: gunakan untuk payload)
     const opt = select.selectedOptions[0];
     const optService = parseInt(opt?.getAttribute('data-id-service')) || null;
 
@@ -521,6 +542,11 @@ async function autofillFromSPK() {
     document.getElementById('id_customer').value = spk.id_customer;
     document.getElementById('id_jasa').value = spk.id_jasa;
     document.getElementById('no_kendaraan').value = spk.no_kendaraan;
+    // Isi keluhan & catatan
+document.getElementById('keluhan').value = spk.keluhan || '';
+document.getElementById('catatan').value = spk.catatan || '';
+document.getElementById('keluhanCatatanSection').style.display = 'block';
+
 
     // Set radio jenis_service sesuai id_service dari SPK
     const svc = optService || spk.id_service || null;

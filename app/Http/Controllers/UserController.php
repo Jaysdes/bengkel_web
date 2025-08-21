@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    protected $apiUrl = 'http://localhost:8001/api/users';
+    protected $apiUrl = 'https://apibengkel.up.railway.app/api/users';
 
     /**
      * Display a listing of users

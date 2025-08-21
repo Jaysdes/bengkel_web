@@ -22,7 +22,7 @@ class LoginController extends Controller
 
         $client = new \GuzzleHttp\Client();
         try {
-            $response = $client->post('http://localhost:8001/auth/login', [
+            $response = $client->post('https://apibengkel.up.railway.app/auth/login', [
                 'json' => $credentials
             ]);
 

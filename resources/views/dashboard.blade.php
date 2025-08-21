@@ -316,7 +316,7 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4">
+            <div class="modal-body p-4 bg-dark">
                 <div class="space-y-4">
                     <div class="flex justify-between">
                         <span class="font-medium text-gray-400">Application Name:</span>

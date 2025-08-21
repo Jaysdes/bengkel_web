@@ -177,7 +177,7 @@
 <script>
     // CONFIG
     const token = "{{ session('token') }}";
-    const apiBase = 'http://localhost:8001/';
+    const apiBase = 'https://apibengkel.up.railway.app/';
 
     // STATE
     let allData = [];

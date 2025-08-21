@@ -57,7 +57,7 @@
     </div>
 </div>
 <script>
-const API_URL = '{{ env('API_URL', 'http://localhost:8001/api') }}';
+const API_URL = '{{ env('API_URL', 'https://apibengkel.up.railway.app/api') }}';
 const token = "{{ session('token') }}";
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -77,47 +77,49 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         let html = '';
-        rows.forEach((item, index) => {
-            const total = Number(item.total || 0);
-            const bayar = Number(item.bayar || 0);
-            const kembalian = Number(item.kembalian || 0);
-            const statusLunas = (item.status_pembayaran && item.status_pembayaran.toLowerCase() === 'lunas') || (bayar >= total);
-            const statusBatal = item.status_pembayaran && item.status_pembayaran.toLowerCase() === 'dibatalkan';
+rows.forEach((item, index) => {
+    const total = Number(item.total || 0);
+    const bayar = Number(item.bayar || 0);
+    const kembalian = Number(item.kembalian || 0);
 
-            const statusHtml = statusBatal
-                ? '<span class="badge bg-secondary">Dibatalkan</span>'
-                : statusLunas ? '<span class="badge bg-success">Lunas</span>'
-                : '<span class="badge bg-danger">Belum Lunas</span>';
+    const statusLunas = (item.status_pembayaran && item.status_pembayaran.toLowerCase() === 'lunas') || (bayar >= total);
+    const statusBatal = item.status_pembayaran && item.status_pembayaran.toLowerCase() === 'dibatalkan';
 
-            html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.id_transaksi}</td>
-                    <td>${item.no_spk ?? '-'}</td>
-                    <td>${(item.customer && (item.customer.nama || item.customer.nama_customer)) || '-'}</td>
-                    <td>${item.no_kendaraan ?? '-'}</td>
-                    <td class="text-end">${formatRupiah(total)}</td>
-                    <td class="text-end">${formatRupiah(bayar)}</td>
-                    <td class="text-end">${formatRupiah(kembalian)}</td>
-                    <td>${statusHtml}</td>
-                    <td class="d-flex gap-1">
-                        ${(!statusLunas && !statusBatal)
-                            ? `<button class="btn btn-sm btn-success" onclick="showFormBayar(${item.id_transaksi}, ${total})">Bayar</button>
-                               <button class="btn btn-sm btn-outline-secondary" onclick="batalkanTransaksi(${item.id_transaksi})">Batalkan</button>`
-                            : ''
-                        }
-                        <a href="/nota/${item.id_transaksi}" target="_blank" class="btn btn-sm btn-primary">Cetak Nota</a>
-                    </td>
-                </tr>`;
-        });
-        tbody.innerHTML = html;
+    const statusHtml = statusBatal
+        ? '<span class="badge bg-secondary">Dibatalkan</span>'
+        : statusLunas ? '<span class="badge bg-success">Lunas</span>'
+        : '<span class="badge bg-danger">Belum Lunas</span>';
+
+    html += `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${item.id_transaksi}</td>
+            <td>${item.no_spk ?? '-'}</td>
+            <td>${item.id_customer ?? '-'}</td>   <!-- pakai ID customer dulu -->
+            <td>${item.no_kendaraan ?? '-'}</td>
+            <td class="text-end">${formatRupiah(total)}</td>
+            <td class="text-end">${formatRupiah(bayar)}</td>
+            <td class="text-end">${formatRupiah(kembalian)}</td>
+            <td>${statusHtml}</td>
+            <td class="d-flex gap-1">
+                ${(!statusLunas && !statusBatal)
+                    ? `<button class="btn btn-sm btn-success" onclick="showFormBayar(${item.id_detail}, ${total})">Bayar</button>
+                       <button class="btn btn-sm btn-outline-secondary" onclick="batalkanTransaksi(${item.id_detail})">Batalkan</button>`
+                    : ''
+                }
+                <a href="/nota/${item.id_transaksi}" target="_blank" class="btn btn-sm btn-primary">Cetak Nota</a>
+            </td>
+        </tr>`;
+});
+tbody.innerHTML = html;
+
     }
 
     window.showFormBayar = function(id, total) {
         document.getElementById("bayar-id-transaksi").value = id;
         document.getElementById("bayar-total").value = formatRupiah(total);
         document.getElementById("bayar-total-num").value = total;
-        document.getElementById("bayar-jumlah").value = total; // default = total
+        document.getElementById("bayar-jumlah").value = total;
         new bootstrap.Modal(document.getElementById('modalBayar')).show();
     }
 
@@ -134,13 +136,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const res = await fetch(`${API_URL}/transaksi/${id}/bayar`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { Authorization: `Bearer ${token}` } : {})
-                },
-                body: JSON.stringify({ bayar: jumlahBayar })
-            });
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ bayar: jumlahBayar })
+});
+
             const js = await res.json();
             if (!res.ok) throw new Error(js.message || `Gagal (HTTP ${res.status})`);
 
@@ -156,7 +159,11 @@ document.addEventListener("DOMContentLoaded", function() {
     window.batalkanTransaksi = async function(id) {
         if (!confirm('Batalkan transaksi ini?')) return;
         try {
-            await fetch(`${API_URL}/transaksi/${id}/batal`, { method: 'PUT', headers: token ? { Authorization: `Bearer ${token}` } : {} });
+            await fetch(`${API_URL}/transaksi/${id}/batal`, {
+    method: 'PUT',
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+});
+
             alert('Transaksi dibatalkan');
             loadData();
         } catch (err) {

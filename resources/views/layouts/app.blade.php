@@ -41,11 +41,15 @@
     :root {
       --neon-blue: #3b82f6;         /* Blue */
       --neon-blue-dark: #1d4ed8;    /* Darker Blue */
-      --neon-blue-light: #60a5fa;   /* Lighter Blue */
-  
-      --dark-border: #1d4ed8;       /* Border */
+      --neon-blue-light: #3b82f6;   /* Lighter Blue */
+      --dark-bg: #000000;           /* Black */
+      --dark-surface: #0b0b0b;      /* Near black */
+      --dark-card: #151515;         /* Card surface */
+      --dark-border: #2b2b2b;       /* Border */
+      --text-primary: #ffffff;      /* White */
       --text-secondary: #e5e7eb;    /* Gray-200 */
-      --text-muted: #9ca3af;        /* Gray-400 */
+      --text-muted: #9ca3af; 
+      --text-white: #ffffff;
     }
     body { 
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
@@ -57,12 +61,6 @@
     .neon-text { color: var(--neon-blue); text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue); }
     .neon-border { border: 2px solid var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue), inset 0 0 10px rgba(59, 130, 246, 0.15); }
     .sidebar-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .stat-card { 
-            background-color: #000000; /* hitam */
-            color: #ffffff; /* teks putih */
-            border: none;
-            
-        }
     .stat-card-hover { transition: all 0.3s ease; cursor: pointer; } .card-hover:hover { transform: translateY(-8px); }
     .btn-neon { background: linear-gradient(45deg, #0b0b0b, #151515); border: 2px solid var(--neon-blue); color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.35); }
     .btn-neon:hover { background: var(--neon-blue); color: #0b0b0b; box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 4px 15px rgba(0, 0, 0, 0.3); transform: translateY(-2px); }
@@ -83,10 +81,11 @@
     color: #000000; 
     border-left: 1px solid #e5e7eb; /* border abu-abu terang */
 }
+
     .main-content::-webkit-scrollbar { width: 8px; } .main-content::-webkit-scrollbar-track { background: var(--dark-surface); } .main-content::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 4px; } .main-content::-webkit-scrollbar-thumb:hover { background: var(--neon-blue-light); }
     @media (max-width: 768px) { .main-content { border-radius: 20px 20px 0 0; } }
     .page-title { background: linear-gradient(45deg, var(--neon-blue), var(--neon-blue-light)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-size: 2rem; margin-bottom: 0.5rem; }
-    .stat-card { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 16px; transition: all 0.3s ease; overflow: hidden; position: relative; }
+    .stat-card { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 20px; transition: all 0.3s ease; overflow: hidden; position: relative; }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon-blue), var(--neon-blue-light)); }
     .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.5); }
     .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; background: linear-gradient(45deg, var(--neon-blue), var(--neon-blue-dark)); color: var(--dark-bg); box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
@@ -108,8 +107,14 @@
     padding: 12px 16px; 
     transition: all 0.3s ease; 
     background: #ffffff; /* putih */
-    color: #000000; /* hitam */
+    color: #000000;
+    text-color:#ffffff; /* hitam */
 }
+
+.card-body { background: var(--white-card); border: 1px solid var(--dark-border);overflow: hidden; position: relative; }
+.card-header { background: var(--white-card); border: 1px solid var(--neon-blue); border-radius: 5px; overflow: hidden; position: relative; }
+.card-2{ background: var(--white-card); border: 1px solid var(--neon-blue); border-radius: 5px; overflow: hidden; position: relative; }
+
 .input-neon:focus { 
     border-color: var(--neon-blue); 
     background: #ffffff; /* tetap putih saat fokus */
@@ -128,9 +133,10 @@
     ::placeholder { color: var(--text-muted); }
     .modal-content { background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--text-primary); }
     .modal-header { border-bottom: 1px solid var(--dark-border); } .modal-footer { border-top: 1px solid var(--dark-border); }
+
     .btn-close { filter: invert(1); }
-    .form-control, .form-select { background: var(--dark-surface); border: 2px solid var(--dark-border); color: var(--text-primary); }
-    .form-control:focus, .form-select:focus { background: var(--dark-bg); border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); color: var(--text-primary); }
+    .form-control, .form-select { background: var(--text-white); border: 2px solid var(--dark-border); color:var(--dark-bg); }
+    .form-control:focus, .form-select:focus { background: var(--text-white); border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); color: var(--dark-bg); }
     .dropdown-menu { background: var(--dark-card); border: 1px solid var(--dark-border); }
     .dropdown-item { color: var(--text-secondary); } .dropdown-item:hover { background: rgba(59, 130, 246, 0.12); color: var(--neon-blue); }
   </style>

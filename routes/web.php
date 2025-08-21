@@ -33,10 +33,14 @@ Route::middleware('auth.session')->group(function () {
 
 
     // Rute Sidebar Tab
-    Route::get('/nota/{id}', [NotaController::class, 'nota']);
+    Route::get('/nota/{id}', [NotaController::class, 'nota'])->name('nota');
 
 
     Route::get('/data', [DataController::class, 'index'])->name('data');
+    Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi.index');
+    Route::post('/teknisi/pengerjaan', [TeknisiController::class, 'storePengerjaan'])->name('teknisi.pengerjaan.store');
+    Route::get('/transaksi', [TeknisiController::class, 'transaksiIndex'])->name('transaksi.index');
+
     Route::get('/teknisi', [TeknisiController::class, 'index'])->name('teknisi');
     Route::get('/proses', [ProsesController::class, 'index'])->name('proses');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
@@ -46,9 +50,7 @@ Route::middleware('auth.session')->group(function () {
     Route::get('/daftar-transaksi', function () {
         return view('daftar_transaksi');
     });
-    Route::get('/validasi', function () {
-        return view('validasi'); // validasi.blade.php di folder resources/views
-    })->name('validasi');
+    Route::get('/validasi', function () {return view('validasi'); })->name('validasi');
     // Rute SPK
     Route::get('/spk', function () {return view('spk');})->name('spk');
 

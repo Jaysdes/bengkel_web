@@ -60,7 +60,7 @@
 
 <script>
     const token = "{{ session('token') }}";
-    const apiBase = 'http://localhost:8001/api';
+    const apiBase = 'https://apibengkel.up.railway.app/api';
 
     function toggleForm() {
         const formDiv = document.getElementById('formSparepart');
